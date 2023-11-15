@@ -1,128 +1,77 @@
-import { useState, useEffect } from 'react';
-import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
-import './App.css';
+import React, { useState } from 'react';
+import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
+import {
+  Drawer,
+  IconButton,
+  List,
+  ListItem,
+  ListItemText,
+} from '@mui/material';
+import MenuIcon from '@mui/icons-material/Menu';
 
-// データ型を定義
-interface Todo {
-  id: number;
-  text: string;
-  completed: boolean;
-}
+// 画面1のコンポーネント
+const Home = () => (
+  <div>
+    <h2>Home</h2>
+    <p>Welcome to the home page!</p>
+  </div>
+);
 
-interface ElectronWindow extends Window {
-  db: {
-    loadTodoList: () => Promise<Array<Todo> | null>;
-    storeTodoList: (todoList: Array<Todo>) => Promise<void>;
-  };
-}
+// 画面2のコンポーネント
+const About = () => (
+  <div>
+    <h2>About</h2>
+    <p>This is the about page.</p>
+  </div>
+);
 
-declare const window: ElectronWindow;
+function App() {
+  const [drawerOpen, setDrawerOpen] = useState(false);
 
-// データ操作
-// ToDoリストを読み込み
-const loadTodoList = async (): Promise<Array<Todo> | null> => {
-  const todoList = await window.db.loadTodoList();
-  return todoList;
-};
+  const toggleDrawer =
+    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+      if (
+        event.type === 'keydown' &&
+        (event as React.KeyboardEvent).key === 'Tab'
+      ) {
+        return;
+      }
 
-// ToDoリストを保存
-const storeTodoList = async (todoList: Array<Todo>): Promise<void> => {
-  await window.db.storeTodoList(todoList);
-};
+      setDrawerOpen(open);
+    };
 
-export default function App() {
   return (
     <Router>
-      <Routes>
-        <Route path="/" element={<HomeScreen />} />
-      </Routes>
+      <div>
+        <IconButton
+          onClick={toggleDrawer(true)}
+          color="inherit"
+          edge="start"
+          aria-label="menu"
+        >
+          <MenuIcon />
+        </IconButton>
+
+        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
+          <List>
+            <ListItem button component={Link} to="/">
+              <ListItemText primary="Home" />
+            </ListItem>
+            <ListItem button component={Link} to="/about">
+              <ListItemText primary="About" />
+            </ListItem>
+          </List>
+        </Drawer>
+
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/about" element={<About />} />
+          </Routes>
+        </main>
+      </div>
     </Router>
   );
 }
 
-const HomeScreen = () => {
-  // stateを定義
-  const [text, setText] = useState<string>('');
-  const [todoList, setTodoList] = useState<Array<Todo>>([]);
-
-  useEffect(() => {
-    loadTodoList().then((todoList) => {
-      if (todoList) {
-        setTodoList(todoList);
-        console.log(todoList);
-      }
-    });
-  }, []);
-
-  const onSubmit = () => {
-    // ボタンクリック時にtodoListに新しいToDoを追加
-    if (text !== '') {
-      const newTodoList: Array<Todo> = [
-        {
-          id: new Date().getTime(),
-          text: text,
-          completed: false,
-        },
-        ...todoList,
-      ];
-      setTodoList(newTodoList);
-      storeTodoList(newTodoList);
-
-      // テキストフィールドを空にする
-      setText('');
-    }
-  };
-
-  const onCheck = (newTodo: Todo) => {
-    // チェック時にcompletedの値を書き換える
-    const newTodoList = todoList.map((todo) => {
-      return todo.id == newTodo.id
-        ? { ...newTodo, completed: !newTodo.completed }
-        : todo;
-    });
-    setTodoList(newTodoList);
-    storeTodoList(newTodoList);
-  };
-
-  return (
-    <div>
-      <div className="container">
-        <div className="input-field">
-          <input
-            type="text"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <button onClick={onSubmit} className="add-todo-button">
-            追加
-          </button>
-        </div>
-
-        <ul className="todo-list">
-          {todoList?.map((todo) => {
-            return <Todo key={todo.id} todo={todo} onCheck={onCheck} />;
-          })}
-        </ul>
-      </div>
-    </div>
-  );
-};
-
-const Todo = (props: { todo: Todo; onCheck: Function }) => {
-  const { todo, onCheck } = props;
-  const onCheckHandler = () => {
-    onCheck(todo);
-  };
-  return (
-    <li className={todo.completed ? 'checked' : ''}>
-      <label>
-        <input
-          type="checkbox"
-          checked={todo.completed}
-          onChange={onCheckHandler}
-        ></input>
-        <span>{todo.text}</span>
-      </label>
-    </li>
-  );
-};
+export default App;
