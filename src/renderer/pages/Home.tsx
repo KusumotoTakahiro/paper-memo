@@ -1,17 +1,14 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Button from '@mui/material/Button';
-import Typography from '@mui/material/Typography';
 
 import SearchBar from '../components/SearchBar';
+import PaperTable from '../components/PaperTable';
+
 import { PDFMetaData } from '../../common/types';
 
 const Home = () => {
   const [dirPath, setDirPath] = React.useState<string>('');
-  const [pdfMetaData, setPdfMetaData] = React.useState<PDFMetaData[]>();
+  const [pdfs, setPdfs] = React.useState<PDFMetaData[]>([]);
 
   const searchPDF = (searchQuery: string) => {
     return 0;
@@ -40,7 +37,7 @@ const Home = () => {
             });
         }
         console.log(newPdfFiles);
-        setPdfMetaData(newPdfFiles);
+        setPdfs(newPdfFiles);
       })
       .catch((err) => {
         console.error(err);
@@ -62,18 +59,12 @@ const Home = () => {
           xs={12}
           sm={8}
           style={{
-            backgroundColor: 'red',
             marginTop: 70,
           }}
-        ></Grid>
-        <Grid
-          item
-          xs={12}
-          sm={4}
-          style={{
-            backgroundColor: 'blue',
-          }}
         >
+          {pdfs?.length > 0 && <PaperTable pdfs={pdfs}></PaperTable>}
+        </Grid>
+        <Grid item xs={12} sm={4}>
           <Grid
             container
             spacing={2}
@@ -81,12 +72,7 @@ const Home = () => {
             justifyContent="flex-start"
             alignItems="flex-end"
           >
-            <Grid
-              item
-              style={{
-                backgroundColor: 'yellow',
-              }}
-            >
+            <Grid item>
               <SearchBar onSearch={searchPDF} />
             </Grid>
           </Grid>
