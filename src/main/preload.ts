@@ -4,6 +4,16 @@ import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
 
 export type Channels = 'ipc-example';
 
+/**
+ * ここでレンダラープロセスとメインプロセスの通信を定義する
+ * ex)
+ * test: {
+ *  通信名: (引数: 引数の型) => {
+ *    ipcRenderer.メソッド();
+ *    return OOOO;
+ *  }
+ * }
+ */
 const electronHandler = {
   ipcRenderer: {
     sendMessage(channel: Channels, ...args: unknown[]) {
@@ -20,6 +30,21 @@ const electronHandler = {
     },
     once(channel: Channels, func: (...args: unknown[]) => void) {
       ipcRenderer.once(channel, (_event, ...args) => func(...args));
+    },
+  },
+  fs: {
+    readFolderPDF: async (dirPath: string) => {
+      const PDFdata = await ipcRenderer.invoke('read-file', [dirPath]);
+      return PDFdata;
+    },
+  },
+  PDFmetaData: {
+    getInfo: async (filePath: string, fileName: string) => {
+      const PDFMetaData = await ipcRenderer.invoke(
+        'get-pdf-info',
+        ...[filePath, fileName],
+      );
+      return PDFMetaData;
     },
   },
 };

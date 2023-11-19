@@ -7,4 +7,14 @@ declare global {
   }
 }
 
+export interface IElectronAPI {
+  openByButton: () => Promise<string | void | undefined>;
+}
+
+declare global {
+  interface Window {
+    myAPI: IElectronAPI;
+  }
+}
+
 export {};

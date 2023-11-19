@@ -1,77 +1,110 @@
-import React, { useState } from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import {
-  Drawer,
-  IconButton,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
+import * as React from 'react';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 
-// 画面1のコンポーネント
-const Home = () => (
-  <div>
-    <h2>Home</h2>
-    <p>Welcome to the home page!</p>
-  </div>
-);
+import HomePage from './pages/Home';
+import CreatePage from './pages/Create';
+import SettingPage from './pages/Setting';
+import LogoutPage from './pages/logout';
 
-// 画面2のコンポーネント
-const About = () => (
-  <div>
-    <h2>About</h2>
-    <p>This is the about page.</p>
-  </div>
-);
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import List from '@mui/material/List';
+import ListItem from '@mui/material/ListItem';
+import ListItemButton from '@mui/material/ListItemButton';
+import ListItemIcon from '@mui/material/ListItemIcon';
+import ListItemText from '@mui/material/ListItemText';
+import IconButton from '@mui/material/IconButton';
 
-function App() {
-  const [drawerOpen, setDrawerOpen] = useState(false);
+import Menu from '@mui/icons-material/Menu';
+import Home from '@mui/icons-material/Home';
+import FormatListNumbered from '@mui/icons-material/FormatListNumbered';
+import SettingsIcon from '@mui/icons-material/Settings';
+import LogoutIcon from '@mui/icons-material/Logout';
+
+type Anchor = 'top' | 'left' | 'bottom' | 'right';
+
+export default function TemporaryDrawer() {
+  const [state, setState] = React.useState({
+    left: false,
+  });
+
+  const iconList = [
+    <Home />,
+    <FormatListNumbered />,
+    <SettingsIcon />,
+    <LogoutIcon />,
+  ];
+
+  const routePath = ['#home', '#create', '#setting', '#logout'];
 
   const toggleDrawer =
-    (open: boolean) => (event: React.KeyboardEvent | React.MouseEvent) => {
+    (anchor: Anchor, open: boolean) =>
+    (event: React.KeyboardEvent | React.MouseEvent) => {
       if (
         event.type === 'keydown' &&
-        (event as React.KeyboardEvent).key === 'Tab'
+        ((event as React.KeyboardEvent).key === 'Tab' ||
+          (event as React.KeyboardEvent).key === 'Shift')
       ) {
         return;
       }
-
-      setDrawerOpen(open);
+      setState({ ...state, [anchor]: open });
     };
 
+  const list = (anchor: Anchor = 'left') => (
+    <Box
+      sx={{ width: 250 }}
+      role="presentation"
+      onClick={toggleDrawer(anchor, false)}
+      onKeyDown={toggleDrawer(anchor, false)}
+    >
+      <List>
+        {['Home', 'create an index', 'my page', 'log out'].map(
+          (text, index) => (
+            <ListItem key={text} disablePadding>
+              <ListItemButton href={routePath[index]}>
+                <ListItemIcon>{iconList[index]}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItemButton>
+            </ListItem>
+          ),
+        )}
+      </List>
+    </Box>
+  );
+
   return (
-    <Router>
-      <div>
-        <IconButton
-          onClick={toggleDrawer(true)}
-          color="inherit"
-          edge="start"
-          aria-label="menu"
-        >
-          <MenuIcon />
-        </IconButton>
-
-        <Drawer anchor="left" open={drawerOpen} onClose={toggleDrawer(false)}>
-          <List>
-            <ListItem button component={Link} to="/">
-              <ListItemText primary="Home" />
-            </ListItem>
-            <ListItem button component={Link} to="/about">
-              <ListItemText primary="About" />
-            </ListItem>
-          </List>
-        </Drawer>
-
-        <main>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-          </Routes>
-        </main>
-      </div>
-    </Router>
+    <>
+      <IconButton
+        onClick={toggleDrawer('left', true)}
+        color="inherit"
+        aria-label="menu"
+        style={{
+          background: '#607d8b',
+          borderRadius: '50',
+          position: 'fixed',
+          top: 10,
+          left: 20,
+          boxShadow: '2px 2px 2px rgba(0,0,0,0.3)',
+        }}
+      >
+        <Menu />
+      </IconButton>
+      <Drawer
+        anchor={'left'}
+        open={state['left']}
+        onClose={toggleDrawer('left', false)}
+      >
+        {list()}
+      </Drawer>
+      <HashRouter>
+        <Routes>
+          <Route path="/home" element={<HomePage />} />
+          <Route path="/create" element={<CreatePage />} />
+          <Route path="/setting" element={<SettingPage />} />
+          <Route path="/logout" element={<LogoutPage />} />
+          <Route path="/" element={<HomePage />} />
+        </Routes>
+      </HashRouter>
+    </>
   );
 }
-
-export default App;
