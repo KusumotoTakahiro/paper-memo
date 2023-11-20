@@ -47,6 +47,12 @@ const electronHandler = {
       return PDFMetaData;
     },
   },
+  fileDialog: {
+    open: async () => {
+      const filePath: string = await ipcRenderer.invoke('open-by-button');
+      return String(filePath);
+    },
+  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);

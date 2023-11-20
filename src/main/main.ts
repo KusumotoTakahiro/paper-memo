@@ -5,6 +5,7 @@ import log from 'electron-log';
 import { resolveHtmlPath } from './util';
 import fsFunctionListener from './functions/fsFunction';
 import cliFunctionListener from './functions/cliFunctions';
+import fileDialogFunctionListener from './functions/fileDialogFunction';
 
 class AppUpdater {
   constructor() {
@@ -70,6 +71,8 @@ const createWindow = async () => {
         : path.join(__dirname, '../../.erb/dll/preload.js'),
     },
   });
+
+  fileDialogFunctionListener(mainWindow);
 
   mainWindow.loadURL(resolveHtmlPath('index.html'));
 
