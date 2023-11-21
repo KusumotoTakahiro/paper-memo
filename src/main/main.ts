@@ -6,6 +6,13 @@ import { resolveHtmlPath } from './util';
 import fsFunctionListener from './functions/fsFunction';
 import cliFunctionListener from './functions/cliFunctions';
 import fileDialogFunctionListener from './functions/fileDialogFunction';
+import { electronStoreListener } from './functions/electronStore';
+import store from './functions/electronStore';
+
+const DEFAULT_SIZE = {
+  width: 1024,
+  height: 728,
+};
 
 class AppUpdater {
   constructor() {
@@ -21,6 +28,7 @@ let mainWindow: BrowserWindow | null = null;
 // 中でipcMain.onなどを行い、ここで実行
 fsFunctionListener();
 cliFunctionListener();
+electronStoreListener();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');
@@ -60,15 +68,26 @@ const createWindow = async () => {
     return path.join(RESOURCES_PATH, ...paths);
   };
 
+  const pos = store.get('window.pos') || [0, 0];
+  const size = store.get('window.size') || [
+    DEFAULT_SIZE.width,
+    DEFAULT_SIZE.height,
+  ];
+
   mainWindow = new BrowserWindow({
     show: false,
-    width: 1024,
-    height: 728,
+    width: size[0],
+    height: size[1],
+    x: pos[0],
+    y: pos[1],
     icon: getAssetPath('icon.png'),
     webPreferences: {
       preload: app.isPackaged
         ? path.join(__dirname, 'preload.js')
         : path.join(__dirname, '../../.erb/dll/preload.js'),
+      defaultFontFamily: {
+        serif: 'serif',
+      },
     },
   });
 
@@ -84,6 +103,13 @@ const createWindow = async () => {
       mainWindow.minimize();
     } else {
       mainWindow.show();
+    }
+  });
+
+  mainWindow.on('resize', () => {
+    if (mainWindow !== null) {
+      store.set('window.pos', mainWindow.getPosition()); // ウィンドウの座標を記録
+      store.set('window.size', mainWindow.getSize()); // ウィンドウのサイズを記録
     }
   });
 

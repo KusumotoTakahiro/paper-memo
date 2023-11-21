@@ -53,6 +53,16 @@ const electronHandler = {
       return String(filePath);
     },
   },
+  electronStore: {
+    getlist: async () => {
+      const value: string[] = await ipcRenderer.invoke('store-getlist');
+      return value;
+    },
+    setlist: async (value: string[]) => {
+      const isSet: boolean = await ipcRenderer.invoke('store-setlist', value);
+      return isSet;
+    },
+  },
 };
 
 contextBridge.exposeInMainWorld('electron', electronHandler);
