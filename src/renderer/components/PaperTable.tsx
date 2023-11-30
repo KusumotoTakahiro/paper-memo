@@ -78,13 +78,6 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
     //deleteAction(index);
   };
 
-  const handleEditClick = (
-    event: React.MouseEvent<HTMLButtonElement>,
-    index: number,
-  ) => {
-    //deleteAction(index);
-  };
-
   const handleFileSelect = (
     event: React.MouseEvent<HTMLDivElement>,
     index: number,

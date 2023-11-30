@@ -32,13 +32,11 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   }, [nowPdf, dirPath]);
 
   const readTxtFile = async (filePath: string) => {
-    // const filedata = await window.electron.fs.readTxtFile(filePath);
-    // setMemoContents(filedata);
-    // console.log(filedata);
     await window.electron.fs.existTxtFile(filePath).then(async (fileExists) => {
       if (fileExists) {
         const filedata = await window.electron.fs.readTxtFile(filePath);
         setMemoContents(filedata);
+        console.log(filedata);
       } else {
         console.error('File does not exist:', filePath);
       }
@@ -70,7 +68,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
             marginTop: 20,
           }}
           onChange={handleOnChange}
-          defaultValue={memoContents}
+          value={memoContents}
         />
       ) : (
         <Paper
