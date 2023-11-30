@@ -35,9 +35,9 @@ const getMetaData = (pdfMetaData: string) => {
         metaDataObject.fileSize = String(`${match[1]}bytes`);
       }
     }
-    console.log(key + ' : ' + value);
+    // console.log(key + ' : ' + value);
   }
-  console.log(metaDataObject);
+  // console.log(metaDataObject);
   return metaDataObject;
 };
 

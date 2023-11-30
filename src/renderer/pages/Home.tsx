@@ -3,15 +3,26 @@ import Grid from '@mui/material/Grid';
 
 import SearchBar from '../components/SearchBar';
 import PaperTable from '../components/PaperTable';
-
+import MemoMarkdown from '../components/MemoMarkdown';
 import { PDFMetaData } from '../../common/types';
 
 const Home = () => {
   const [dirPath, setDirPath] = React.useState<string>('');
   const [pdfs, setPdfs] = React.useState<PDFMetaData[]>([]);
+  const [winSize, setWinSize] = React.useState<Number[]>([0, 0]);
+  const [nowPdf, setNowPdf] = React.useState<PDFMetaData>({
+    fileName: 'undefined',
+    pages: -1,
+    fileSize: '0',
+  });
 
   const searchPDF = (searchQuery: string) => {
     return 0;
+  };
+
+  const handleNowFile = async (pdfFile: PDFMetaData) => {
+    setNowPdf(pdfFile);
+    console.log(pdfFile);
   };
 
   const readDirectory = async () => {
@@ -36,7 +47,6 @@ const Home = () => {
               console.error(err);
             });
         }
-        console.log(newPdfFiles);
         setPdfs(newPdfFiles);
       })
       .catch((err) => {
@@ -45,10 +55,14 @@ const Home = () => {
   };
 
   React.useEffect(() => {
-    setDirPath('C:\\Users\\ganta\\testFolderforPaparMemo');
-    if (dirPath !== '') {
-      readDirectory();
-    }
+    window.electron.electronStore.getlist().then((list) => {
+      window.electron.electronStore.getSelectedIndex().then((idx) => {
+        setDirPath(list[idx]);
+        if (dirPath !== '') {
+          readDirectory();
+        }
+      });
+    });
   }, [dirPath]);
 
   return (
@@ -57,14 +71,16 @@ const Home = () => {
         <Grid
           item
           xs={12}
-          sm={8}
+          sm={7}
           style={{
             marginTop: 70,
           }}
         >
-          {pdfs?.length > 0 && <PaperTable pdfs={pdfs}></PaperTable>}
+          {pdfs?.length > 0 && (
+            <PaperTable pdfs={pdfs} handleNowFile={handleNowFile}></PaperTable>
+          )}
         </Grid>
-        <Grid item xs={12} sm={4}>
+        <Grid item xs={12} sm={5}>
           <Grid
             container
             spacing={2}
@@ -76,7 +92,7 @@ const Home = () => {
               <SearchBar onSearch={searchPDF} />
             </Grid>
           </Grid>
-          論文メモ
+          <MemoMarkdown nowPdf={nowPdf} dirPath={dirPath} />
         </Grid>
       </Grid>
     </>

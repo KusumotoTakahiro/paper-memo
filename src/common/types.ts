@@ -3,3 +3,7 @@ export interface PDFMetaData {
   pages: number;
   fileSize: string;
 }
+
+export interface MemoContent {
+  contentBody: string;
+}

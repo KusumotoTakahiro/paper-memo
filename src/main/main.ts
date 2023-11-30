@@ -7,6 +7,7 @@ import fsFunctionListener from './functions/fsFunction';
 import cliFunctionListener from './functions/cliFunctions';
 import fileDialogFunctionListener from './functions/fileDialogFunction';
 import { electronStoreListener } from './functions/electronStore';
+import makedListner from './functions/makeMarkDown';
 import store from './functions/electronStore';
 
 const DEFAULT_SIZE = {
@@ -29,6 +30,7 @@ let mainWindow: BrowserWindow | null = null;
 fsFunctionListener();
 cliFunctionListener();
 electronStoreListener();
+makedListner();
 
 if (process.env.NODE_ENV === 'production') {
   const sourceMapSupport = require('source-map-support');

@@ -1,6 +1,7 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
+import { MemoContent } from '../common/types';
 
 export type Channels = 'ipc-example';
 
@@ -34,8 +35,27 @@ const electronHandler = {
   },
   fs: {
     readFolderPDF: async (dirPath: string) => {
-      const PDFdata = await ipcRenderer.invoke('read-file', [dirPath]);
+      const PDFdata = await ipcRenderer.invoke('read-dir', [dirPath]);
       return PDFdata;
+    },
+    writeTxtFile: async (filePath: string, data: string) => {
+      await ipcRenderer.invoke('write-file', ...[filePath, data]);
+    },
+    readTxtFile: async (filePath: string) => {
+      const data: string = await ipcRenderer.invoke('read-file', [filePath]);
+      return data;
+    },
+    isDir: async (filePath: string) => {
+      const isDirectory = await ipcRenderer.invoke('is-dir', [filePath]);
+      return isDirectory;
+    },
+    makeDir: async (dirPath: string) => {
+      const exsitDirectory = await ipcRenderer.invoke('make-dir', [dirPath]);
+      return exsitDirectory;
+    },
+    existTxtFile: async (filePath: string) => {
+      const isExist: boolean = await ipcRenderer.invoke('exist', [filePath]);
+      return isExist;
     },
   },
   PDFmetaData: {
@@ -61,6 +81,31 @@ const electronHandler = {
     setlist: async (value: string[]) => {
       const isSet: boolean = await ipcRenderer.invoke('store-setlist', value);
       return isSet;
+    },
+    getWindowSize: async () => {
+      const winSize = await ipcRenderer.invoke('get-window-size');
+      return winSize;
+    },
+    getSelectedIndex: async () => {
+      const index: number = await ipcRenderer.invoke('get-selected-index');
+      return index;
+    },
+    setSelectedIndex: async (index: number) => {
+      await ipcRenderer.invoke('set-selected-index', index);
+    },
+    getMemoTemplate: async () => {
+      const memoTemplate: string =
+        await ipcRenderer.invoke('get-memo-template');
+      return memoTemplate;
+    },
+    setMmoTemplate: async (memoTemplate: string) => {
+      await ipcRenderer.invoke('set-memo-template', memoTemplate);
+    },
+  },
+  makeMD: {
+    makeMD: async (memo: string) => {
+      const memoMD: any = await ipcRenderer.invoke('make-md', memo);
+      return memoMD;
     },
   },
 };
