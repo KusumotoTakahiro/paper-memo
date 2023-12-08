@@ -14,6 +14,7 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import IconButton from '@mui/material/IconButton';
+import Fab from '@mui/material/Fab';
 
 import Menu from '@mui/icons-material/Menu';
 import Home from '@mui/icons-material/Home';
@@ -74,21 +75,20 @@ export default function TemporaryDrawer() {
 
   return (
     <>
-      <IconButton
+      <Fab
         onClick={toggleDrawer('left', true)}
-        color="inherit"
         aria-label="menu"
+        size="medium"
         style={{
-          background: '#607d8b',
-          borderRadius: '50',
           position: 'fixed',
           top: 10,
           left: 20,
-          boxShadow: '2px 2px 2px rgba(0,0,0,0.3)',
+          color: 'white',
+          backgroundColor: '#abded1',
         }}
       >
         <Menu />
-      </IconButton>
+      </Fab>
       <Drawer
         anchor={'left'}
         open={state['left']}

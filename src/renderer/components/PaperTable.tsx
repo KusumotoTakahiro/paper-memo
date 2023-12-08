@@ -7,6 +7,8 @@ import ListItemButton from '@mui/material/ListItemButton';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
+import Collapse from '@mui/material/Collapse';
+import { TransitionGroup } from 'react-transition-group';
 import IconButton from '@mui/material/IconButton';
 import TaskOutlinedIcon from '@mui/icons-material/TaskOutlined';
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
@@ -89,48 +91,49 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
 
   const generate = () => {
     return pdfs.map((pdf, index) => (
-      <ListItem
-        key={index}
-        secondaryAction={
-          <>
-            <IconButton
-              edge="end"
-              aria-label="delete"
-              onClick={(event) => {
-                handleDeleteClick(event, index);
-              }}
-              style={{
-                background: 'crimson',
-                color: 'white',
-              }}
-            >
-              <DeleteIcon />
-            </IconButton>
-          </>
-        }
-        style={index === selectedIndex ? { background: blue[100] } : {}}
-      >
-        <ListItemButton
-          onClick={(event) => {
-            handleFileSelect(event, index);
-          }}
-          disableRipple
+      <Collapse key={index}>
+        <ListItem
+          key={index}
+          secondaryAction={
+            <>
+              <IconButton
+                edge="end"
+                aria-label="delete"
+                onClick={(event) => {
+                  handleDeleteClick(event, index);
+                }}
+                style={{
+                  background: 'crimson',
+                  color: 'white',
+                }}
+              >
+                <DeleteIcon />
+              </IconButton>
+            </>
+          }
+          style={index === selectedIndex ? { background: blue[100] } : {}}
         >
-          <ListItemAvatar>
-            <IconButton>
-              {index === selectedIndex ? (
-                <Avatar sx={{ bgcolor: blue[500] }}>
-                  <TaskOutlinedIcon style={{ color: 'white' }} />
-                </Avatar>
-              ) : (
-                <Avatar>
-                  <TextSnippetOutlinedIcon />
-                </Avatar>
-              )}
-            </IconButton>
-          </ListItemAvatar>
-          <ListItemText
-            primary={`
+          <ListItemButton
+            onClick={(event) => {
+              handleFileSelect(event, index);
+            }}
+            disableRipple
+          >
+            <ListItemAvatar>
+              <IconButton>
+                {index === selectedIndex ? (
+                  <Avatar sx={{ bgcolor: blue[500] }}>
+                    <TaskOutlinedIcon style={{ color: 'white' }} />
+                  </Avatar>
+                ) : (
+                  <Avatar>
+                    <TextSnippetOutlinedIcon />
+                  </Avatar>
+                )}
+              </IconButton>
+            </ListItemAvatar>
+            <ListItemText
+              primary={`
               ${pdf.fileName} / 
               ${
                 pdf.pages !== undefined || 0
@@ -141,12 +144,17 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
                 pdf.fileSize !== undefined || 0 ? pdf.fileSize : 'file size N.D'
               }
             `}
-          />
-        </ListItemButton>
-      </ListItem>
+            />
+          </ListItemButton>
+        </ListItem>
+      </Collapse>
     ));
   };
-  return <List dense={dense}>{generate()}</List>;
+  return (
+    <List dense={dense}>
+      <TransitionGroup>{generate()}</TransitionGroup>
+    </List>
+  );
 };
 
 export default PaperTable;

@@ -81,7 +81,7 @@ const Home = () => {
           )}
         </Grid>
         <Grid item xs={12} sm={5}>
-          <Grid
+          {/* <Grid
             container
             spacing={2}
             direction="row-reverse"
@@ -91,7 +91,7 @@ const Home = () => {
             <Grid item>
               <SearchBar onSearch={searchPDF} />
             </Grid>
-          </Grid>
+          </Grid> */}
           <MemoMarkdown nowPdf={nowPdf} dirPath={dirPath} />
         </Grid>
       </Grid>

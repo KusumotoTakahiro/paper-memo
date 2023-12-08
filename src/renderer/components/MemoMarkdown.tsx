@@ -1,12 +1,12 @@
 import * as React from 'react';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
+import Fab from '@mui/material/Fab';
+import EditIcon from '@mui/icons-material/Edit';
 import TextField from '@mui/material/TextField';
-import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
-import Typography from '@mui/material/Typography';
 import DOMPurify from 'dompurify';
 import { PDFMetaData } from '../../common/types';
+import Grid from '@mui/material/Grid';
+import Fade from '@mui/material/Fade';
 
 interface Props {
   nowPdf: PDFMetaData;
@@ -27,7 +27,6 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
       setTxtFilePath(filePath);
       await readTxtFile(filePath);
     };
-
     fetchPdfData();
   }, [nowPdf, dirPath]);
 
@@ -36,7 +35,12 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
       if (fileExists) {
         const filedata = await window.electron.fs.readTxtFile(filePath);
         setMemoContents(filedata);
-        console.log(filedata);
+        await window.electron.makeMD
+          .makeMD(filedata)
+          .then((memoHTML: string) => {
+            setMemoHTML(DOMPurify.sanitize(memoHTML));
+          });
+        setWatchMD(true);
       } else {
         console.error('File does not exist:', filePath);
       }
@@ -49,66 +53,87 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
 
   // MDプレビューを表示すると同時に，Txtファイルの編集を一旦確定させる．
   const previewMD = async () => {
+    // メモを.txtに保存する.
+    await window.electron.fs.writeTxtFile(txtFilePath, memoContents);
+    console.log(memoContents);
     await window.electron.makeMD.makeMD(memoContents).then(async (memoHTML) => {
-      setWatchMD(true);
-      setMemoHTML(DOMPurify.sanitize(memoHTML));
-      await window.electron.fs.writeTxtFile(txtFilePath, memoContents);
+      setWatchMD(!watchMD);
+      await setMemoHTML(DOMPurify.sanitize(memoHTML));
     });
   };
 
   return (
     <>
-      <Typography variant="subtitle1">論文メモ</Typography>
-      {watchMD === false ? (
-        <TextField
-          multiline
-          rows={10}
-          style={{
-            width: 500,
-            marginTop: 20,
-          }}
-          onChange={handleOnChange}
-          value={memoContents}
-        />
-      ) : (
-        <Paper
-          variant="outlined"
-          style={{
-            marginRight: 20,
-            padding: 20,
-            width: 500,
-          }}
+      <div
+        style={{
+          position: 'fixed',
+          width: '40%',
+        }}
+      >
+        {/* <Typography variant="subtitle1">論文メモ</Typography> */}
+        <Grid
+          container
+          direction="row"
+          justifyContent="flex-end"
+          alignItems="center"
         >
-          <div
-            dangerouslySetInnerHTML={{
-              __html: memoHTML,
+          <Grid item>
+            {memoContents === '' ? (
+              <></>
+            ) : (
+              <Fade in={true} timeout={1000}>
+                <Fab
+                  size="medium"
+                  aria-label="edit"
+                  onClick={previewMD}
+                  style={{
+                    color: watchMD === false ? 'black' : 'white',
+                    backgroundColor: watchMD === false ? 'white' : '#abded1',
+                    right: 30,
+                    top: 10,
+                  }}
+                >
+                  <EditIcon />
+                </Fab>
+              </Fade>
+            )}
+          </Grid>
+        </Grid>
+        {watchMD === false ? (
+          <TextField
+            multiline
+            rows={10}
+            style={{
+              width: '100%',
+              marginTop: 20,
+              right: 10,
+              padding: 0,
             }}
-          ></div>
-        </Paper>
-      )}
-      {watchMD === false ? (
-        <Button
-          variant="outlined"
-          onClick={previewMD}
-          style={{
-            margin: 20,
-          }}
-        >
-          編集確定
-        </Button>
-      ) : (
-        <Button
-          variant="outlined"
-          onClick={() => {
-            setWatchMD(false);
-          }}
-          style={{
-            margin: 20,
-          }}
-        >
-          編集再開
-        </Button>
-      )}
+            onChange={handleOnChange}
+            value={memoContents}
+          />
+        ) : memoContents === '' ? (
+          <></>
+        ) : (
+          <Fade in={true} timeout={1000}>
+            <Paper
+              variant="outlined"
+              style={{
+                width: '95%',
+                marginTop: 20,
+                right: 10,
+                padding: 10,
+              }}
+            >
+              <div
+                dangerouslySetInnerHTML={{
+                  __html: memoHTML,
+                }}
+              ></div>
+            </Paper>
+          </Fade>
+        )}
+      </div>
     </>
   );
 };

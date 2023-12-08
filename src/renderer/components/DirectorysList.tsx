@@ -4,10 +4,13 @@ import ListItem from '@mui/material/ListItem';
 import ListItemAvatar from '@mui/material/ListItemAvatar';
 import ListItemText from '@mui/material/ListItemText';
 import Avatar from '@mui/material/Avatar';
+import Collapse from '@mui/material/Collapse';
 import IconButton from '@mui/material/IconButton';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 import { green, pink, blue } from '@mui/material/colors';
+
+import { TransitionGroup } from 'react-transition-group';
 
 interface Props {
   dirs: string[];
@@ -47,41 +50,47 @@ export default function DirectorysList({
 
   const generate = () => {
     return dirs.map((value, index) => (
-      <ListItem
-        key={index}
-        secondaryAction={
-          <IconButton
-            edge="end"
-            aria-label="delete"
-            onClick={(event) => handleDeleteClick(event, index)}
-          >
-            <DeleteIcon />
-          </IconButton>
-        }
-        style={{
-          width: 600,
-        }}
-      >
-        <ListItemAvatar>
-          <IconButton onClick={(event) => handleDefaultSelect(event, index)}>
-            {index === selectedIndex ? (
-              <Avatar sx={{ bgcolor: blue[500] }}>
-                <FolderIcon style={{ color: 'white' }} />
-              </Avatar>
-            ) : (
-              <Avatar>
-                <FolderIcon />
-              </Avatar>
-            )}
-          </IconButton>
-        </ListItemAvatar>
-        <ListItemText
-          primary={value}
-          secondary={secondary ? 'Secondary text' : null}
-        />
-      </ListItem>
+      <Collapse key={index}>
+        <ListItem
+          key={index}
+          secondaryAction={
+            <IconButton
+              edge="end"
+              aria-label="delete"
+              onClick={(event) => handleDeleteClick(event, index)}
+            >
+              <DeleteIcon />
+            </IconButton>
+          }
+          style={{
+            width: 600,
+          }}
+        >
+          <ListItemAvatar>
+            <IconButton onClick={(event) => handleDefaultSelect(event, index)}>
+              {index === selectedIndex ? (
+                <Avatar sx={{ bgcolor: blue[500] }}>
+                  <FolderIcon style={{ color: 'white' }} />
+                </Avatar>
+              ) : (
+                <Avatar>
+                  <FolderIcon />
+                </Avatar>
+              )}
+            </IconButton>
+          </ListItemAvatar>
+          <ListItemText
+            primary={value}
+            secondary={secondary ? 'Secondary text' : null}
+          />
+        </ListItem>
+      </Collapse>
     ));
   };
 
-  return <List dense={dense}>{generate()}</List>;
+  return (
+    <List dense={dense}>
+      <TransitionGroup>{generate()}</TransitionGroup>
+    </List>
+  );
 }

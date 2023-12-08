@@ -53,7 +53,7 @@ const readTxtFile = async (filePath: string) => {
     const txtFile = readFileSync(filePath, { encoding: 'utf8' });
     return txtFile;
   } catch (err) {
-    return err;
+    return '';
   }
 };
 
