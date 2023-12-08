@@ -16,7 +16,7 @@ interface Props {
 const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   const [memoContents, setMemoContents] = React.useState<string>('');
   const [memoHTML, setMemoHTML] = React.useState<string>('');
-  const [watchMD, setWatchMD] = React.useState<boolean>(false);
+  const [watchMD, setWatchMD] = React.useState<boolean>(true);
   const [txtFilePath, setTxtFilePath] = React.useState<string>('');
 
   React.useEffect(() => {
@@ -67,7 +67,9 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
       <div
         style={{
           position: 'fixed',
+          overflow: 'auto',
           width: '40%',
+          height: '90%',
         }}
       >
         {/* <Typography variant="subtitle1">論文メモ</Typography> */}
@@ -83,12 +85,12 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
             ) : (
               <Fade in={true} timeout={1000}>
                 <Fab
-                  size="medium"
+                  size="small"
                   aria-label="edit"
                   onClick={previewMD}
                   style={{
                     color: watchMD === false ? 'black' : 'white',
-                    backgroundColor: watchMD === false ? 'white' : '#abded1',
+                    backgroundColor: watchMD === false ? 'white' : '#abb8de',
                     right: 30,
                     top: 10,
                   }}
@@ -102,12 +104,13 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
         {watchMD === false ? (
           <TextField
             multiline
-            rows={10}
+            minRows={10}
             style={{
               width: '100%',
               marginTop: 20,
-              right: 10,
               padding: 0,
+              fontFamily: 'serif',
+              fontSize: '16px',
             }}
             onChange={handleOnChange}
             value={memoContents}
@@ -123,6 +126,8 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                 marginTop: 20,
                 right: 10,
                 padding: 10,
+                fontFamily: 'serif',
+                fontSize: '16px',
               }}
             >
               <div

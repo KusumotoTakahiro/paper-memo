@@ -13,7 +13,6 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import IconButton from '@mui/material/IconButton';
 import Fab from '@mui/material/Fab';
 
 import Menu from '@mui/icons-material/Menu';
@@ -59,16 +58,14 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {['Home', 'create an index', 'my page', 'log out'].map(
-          (text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton href={routePath[index]}>
-                <ListItemIcon>{iconList[index]}</ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ),
-        )}
+        {['Home', 'index', 'setting', 'Logout'].map((text, index) => (
+          <ListItem key={text} disablePadding>
+            <ListItemButton href={routePath[index]}>
+              <ListItemIcon>{iconList[index]}</ListItemIcon>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
       </List>
     </Box>
   );
@@ -84,7 +81,7 @@ export default function TemporaryDrawer() {
           top: 10,
           left: 20,
           color: 'white',
-          backgroundColor: '#abded1',
+          backgroundColor: '#abb8de',
         }}
       >
         <Menu />

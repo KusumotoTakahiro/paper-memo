@@ -1,6 +1,5 @@
 import React from 'react';
 import { PDFMetaData } from '../../common/types';
-import useWindowSize from './GetWindowSize';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
@@ -12,9 +11,7 @@ import { TransitionGroup } from 'react-transition-group';
 import IconButton from '@mui/material/IconButton';
 import TaskOutlinedIcon from '@mui/icons-material/TaskOutlined';
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
-import DeleteIcon from '@mui/icons-material/Delete';
-import EditIcon from '@mui/icons-material/Edit';
-import { green, pink, blue } from '@mui/material/colors';
+import MoreVertIcon from '@mui/icons-material/MoreVert';
 
 interface Props {
   pdfs: PDFMetaData[];
@@ -23,7 +20,6 @@ interface Props {
 
 const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
   const [dense, setDense] = React.useState(false);
-  const [secondary, setSecondary] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
 
   const initMemoDir = async () => {
@@ -35,17 +31,14 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
           await window.electron.fs
             .makeDir(dirPath)
             .then(async (exsitMemoDir) => {
-              if (!exsitMemoDir) {
-                //作成済みを通知
-              }
               for (let i = 0; i < pdfs.length; i++) {
-                const filenamelength = (pdfs[i]?.fileName).length;
+                const fl = (pdfs[i]?.fileName).length;
                 let filePath =
                   dirPath +
                   '\\Memo\\' +
-                  (pdfs[i]?.fileName).slice(0, filenamelength - 4) +
+                  (pdfs[i]?.fileName).slice(0, fl - 4) +
                   '.txt';
-                window.electron.electronStore
+                await window.electron.electronStore
                   .getMemoTemplate()
                   .then((memoTemplate) => {
                     window.electron.fs
@@ -67,17 +60,15 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
   };
 
   React.useEffect(() => {
-    window.electron.electronStore.getWindowSize().then((winSize) => {
-      console.log(winSize);
-    });
     initMemoDir();
+    console.log('papertable init memo dir!');
   }, []);
 
-  const handleDeleteClick = (
+  const handleMenuClick = (
     event: React.MouseEvent<HTMLButtonElement>,
     index: number,
   ) => {
-    //deleteAction(index);
+    //
   };
 
   const handleFileSelect = (
@@ -95,23 +86,29 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
         <ListItem
           key={index}
           secondaryAction={
-            <>
+            index === selectedIndex ? (
               <IconButton
                 edge="end"
-                aria-label="delete"
+                aria-label="menu"
                 onClick={(event) => {
-                  handleDeleteClick(event, index);
-                }}
-                style={{
-                  background: 'crimson',
-                  color: 'white',
+                  handleMenuClick(event, index);
                 }}
               >
-                <DeleteIcon />
+                <MoreVertIcon />
               </IconButton>
-            </>
+            ) : (
+              <></>
+            )
           }
-          style={index === selectedIndex ? { background: blue[100] } : {}}
+          style={
+            index === selectedIndex
+              ? {
+                  background: '#abb8de',
+                  borderRadius: '15px 35px 15px 35px',
+                  transition: 'background-color 0.3s ease-in-out',
+                }
+              : {}
+          }
         >
           <ListItemButton
             onClick={(event) => {
@@ -122,8 +119,16 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
             <ListItemAvatar>
               <IconButton>
                 {index === selectedIndex ? (
-                  <Avatar sx={{ bgcolor: blue[500] }}>
-                    <TaskOutlinedIcon style={{ color: 'white' }} />
+                  <Avatar
+                    style={{
+                      background: 'white',
+                      transition: 'background-color 0.3s ease-in-out',
+                    }}
+                  >
+                    <TaskOutlinedIcon
+                      fontSize="large"
+                      style={{ color: '#d1abde' }}
+                    />
                   </Avatar>
                 ) : (
                   <Avatar>
