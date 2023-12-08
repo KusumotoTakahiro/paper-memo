@@ -71,7 +71,7 @@ const existsTxtFile = async (filePath: string) => {
   } catch (err: any) {
     if (err.code === 'ENOENT') {
       console.log('File does not exist:', filePath);
-      return err;
+      return false;
     } else {
       console.error('Error checking file existence:', err);
     }
