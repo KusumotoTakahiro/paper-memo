@@ -115,6 +115,8 @@ const makeDir = async (dirPath: string) => {
   return existDirectory;
 };
 
+/**---------------------- ここからset関数群 -----------------------------*/
+
 /**
  * 文字列read-dirをreadFolderPDF()のトリガーとして登録しておく関数.
  */
