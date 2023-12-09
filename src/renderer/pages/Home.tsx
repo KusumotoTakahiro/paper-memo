@@ -9,6 +9,7 @@ import { PDFMetaData } from '../../common/types';
 const Home = () => {
   const [dirPath, setDirPath] = React.useState<string>('');
   const [pdfs, setPdfs] = React.useState<PDFMetaData[]>([]);
+  const [delFlag, setDelFlag] = React.useState<number>(0);
   const [winSize, setWinSize] = React.useState<Number[]>([0, 0]);
   const [nowPdf, setNowPdf] = React.useState<PDFMetaData>({
     fileName: 'undefined',
@@ -23,6 +24,10 @@ const Home = () => {
   const handleNowFile = async (pdfFile: PDFMetaData) => {
     setNowPdf(pdfFile);
     console.log(pdfFile);
+  };
+
+  const setDelFlagRupper = () => {
+    setDelFlag(delFlag + 1);
   };
 
   const readDirectory = async () => {
@@ -63,7 +68,7 @@ const Home = () => {
         }
       });
     });
-  }, [dirPath]);
+  }, [dirPath, delFlag]);
 
   return (
     <>
@@ -77,7 +82,11 @@ const Home = () => {
           }}
         >
           {pdfs?.length > 0 && (
-            <PaperTable pdfs={pdfs} handleNowFile={handleNowFile}></PaperTable>
+            <PaperTable
+              pdfs={pdfs}
+              handleNowFile={handleNowFile}
+              setDirFlag={setDelFlagRupper}
+            ></PaperTable>
           )}
         </Grid>
         <Grid item xs={12} sm={5}>

@@ -12,15 +12,18 @@ import IconButton from '@mui/material/IconButton';
 import TaskOutlinedIcon from '@mui/icons-material/TaskOutlined';
 import TextSnippetOutlinedIcon from '@mui/icons-material/TextSnippetOutlined';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
+import ContextMenu from './ContextMenu';
 
 interface Props {
   pdfs: PDFMetaData[];
   handleNowFile: (pdf: PDFMetaData) => void;
+  setDirFlag: () => void;
 }
 
-const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
+const PaperTable = ({ pdfs = [], handleNowFile, setDirFlag }: Props) => {
   const [dense, setDense] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
+  const [dirPath, setDirPath] = React.useState('');
 
   const initMemoDir = async () => {
     await window.electron.electronStore.getlist().then(async (dirs) => {
@@ -28,6 +31,7 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
         .getSelectedIndex()
         .then(async (idx) => {
           const dirPath = dirs[idx];
+          await setDirPath(dirPath);
           await window.electron.fs
             .makeDir(dirPath)
             .then(async (exsitMemoDir) => {
@@ -87,20 +91,25 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
           key={index}
           secondaryAction={
             index === selectedIndex ? (
-              <IconButton
-                edge="end"
-                aria-label="menu"
-                onClick={(event) => {
-                  handleMenuClick(event, index);
-                }}
-              >
-                <MoreVertIcon />
-              </IconButton>
+              // <IconButton
+              //   edge="end"
+              //   aria-label="menu"
+              //   onClick={(event) => {
+              //     handleMenuClick(event, index);
+              //   }}
+              // >
+              //   <MoreVertIcon />
+              // </IconButton>
+              <ContextMenu
+                filePath={`${dirPath}\\${pdfs[index]?.fileName}`}
+                dirPath={dirPath}
+                setDirFlag={setDirFlag}
+              ></ContextMenu>
             ) : (
               <></>
             )
           }
-          style={
+          sx={
             index === selectedIndex
               ? {
                   background: '#abb8de',
@@ -115,6 +124,20 @@ const PaperTable = ({ pdfs = [], handleNowFile }: Props) => {
               handleFileSelect(event, index);
             }}
             disableRipple
+            sx={
+              index === selectedIndex
+                ? {
+                    '&:hover': {
+                      backgroundColor: 'transparent',
+                    },
+                  }
+                : {
+                    '&:hover': {
+                      borderRadius: '15px',
+                      backgroundColor: 'rgba(171, 184, 222, 0.5)',
+                    },
+                  }
+            }
           >
             <ListItemAvatar>
               <IconButton>
