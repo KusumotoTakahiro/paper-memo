@@ -61,3 +61,17 @@ componentではpagesで直書きし過ぎないようにUIを部品的に保管�
 ### 現在の色参考
 
 https://ironodata.info/rgb.php?color=ABDED1
+
+### パッケージ化の方法
+
+```sh
+npm run package
+```
+
+### パッケージ化されたアプリの初回起動方法
+
+おそらく？　startup.exeなるものを起動すればよい
+
+### パッケージ化されたアプリの展開先
+
+C:\Users\（ユーザ名）\AppData\Local\Programs\electron-react-boilerplate
