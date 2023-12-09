@@ -57,3 +57,7 @@ componentではpagesで直書きし過ぎないようにUIを部品的に保管�
 ### 一旦消した機能
 
 - 検索機能
+
+### 現在の色参考
+
+https://ironodata.info/rgb.php?color=ABDED1
