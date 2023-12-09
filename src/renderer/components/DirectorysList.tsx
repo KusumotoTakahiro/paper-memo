@@ -69,7 +69,7 @@ export default function DirectorysList({
           <ListItemAvatar>
             <IconButton onClick={(event) => handleDefaultSelect(event, index)}>
               {index === selectedIndex ? (
-                <Avatar sx={{ bgcolor: blue[500] }}>
+                <Avatar sx={{ bgcolor: '#d1abde' }}>
                   <FolderIcon style={{ color: 'white' }} />
                 </Avatar>
               ) : (
