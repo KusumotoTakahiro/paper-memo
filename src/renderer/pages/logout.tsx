@@ -1,7 +1,7 @@
 import * as React from 'react';
 
 const Logout = () => {
-  return <>Logout</>;
+  return <></>;
 };
 
 export default Logout;
