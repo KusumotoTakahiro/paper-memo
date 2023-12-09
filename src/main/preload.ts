@@ -59,12 +59,21 @@ const electronHandler = {
     },
   },
   PDFmetaData: {
+    //これもCliFunctionsの一部だけど，移行するとめんどうなので放置.
     getInfo: async (filePath: string, fileName: string) => {
       const PDFMetaData = await ipcRenderer.invoke(
         'get-pdf-info',
         ...[filePath, fileName],
       );
       return PDFMetaData;
+    },
+  },
+  cliFunctions: {
+    openByBrowser: async (filePath: string) => {
+      await ipcRenderer.invoke('open-by-browser', [filePath]);
+    },
+    delFile: async (filePath: string) => {
+      await ipcRenderer.invoke('del-file', [filePath]);
     },
   },
   fileDialog: {

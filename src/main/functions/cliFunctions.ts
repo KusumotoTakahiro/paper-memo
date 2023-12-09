@@ -41,27 +41,73 @@ const getMetaData = (pdfMetaData: string) => {
   return metaDataObject;
 };
 
-const cliFunctionListener = async () => {
+/**
+ * 記述されたパスのファイルまたはディレクトリを表示する．
+ * （ブラウザーとなっているが，パス次第でディレクトリが開くので名前が良くなかった）
+ * @param filePath ファイルパスまたはディレクトリパスを絶対パスで受け取る
+ */
+const openByBrowser = async (filePath: string) => {
+  try {
+    await exec(`explorer ${filePath}`, {
+      encoding: 'Shift_JIS',
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const delFile = async (filePath: string) => {
+  try {
+    await exec(`del ${filePath}`, {
+      encoding: 'Shift_JIS',
+    });
+  } catch (err) {
+    console.log(err);
+  }
+};
+
+const getPDFInfo = async (filePath: string, fileName: string) => {
+  try {
+    const { stdout, stderr } = await exec(
+      `cd ${filePath} && pdfinfo ${fileName}`,
+      {
+        encoding: 'Shift_JIS',
+      },
+    );
+    return getMetaData(SJIStoUNICODE(stdout));
+  } catch (err) {
+    console.log('error in get-pdf-info handler', SJIStoUNICODE(String(err)));
+    return [];
+  }
+};
+
+/**---------------------- ここからset関数群 -----------------------------*/
+
+const setOpenByBrowser = async () => {
+  await ipcMain.handle('open-by-browser', async (event, filePath: string) => {
+    await openByBrowser(filePath);
+  });
+};
+
+const setDelFile = async () => {
+  await ipcMain.handle('del-file', async (event, filePath: string) => {
+    await delFile(filePath);
+  });
+};
+
+const setGetPDFInfo = async () => {
   await ipcMain.handle(
     'get-pdf-info',
     async (event, filePath: string, fileName: string) => {
-      try {
-        const { stdout, stderr } = await exec(
-          `cd ${filePath} && pdfinfo ${fileName}`,
-          {
-            encoding: 'Shift_JIS',
-          },
-        );
-        return getMetaData(SJIStoUNICODE(stdout));
-      } catch (err) {
-        console.log(
-          'error in get-pdf-info handler',
-          SJIStoUNICODE(String(err)),
-        );
-        return [];
-      }
+      return await getPDFInfo(filePath, fileName);
     },
   );
+};
+
+const cliFunctionListener = async () => {
+  await setGetPDFInfo();
+  await setOpenByBrowser();
+  await setDelFile();
 };
 
 export default cliFunctionListener;
