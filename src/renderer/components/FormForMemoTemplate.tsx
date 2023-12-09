@@ -64,6 +64,8 @@ const FormForMemoTemplate = () => {
                   margin: 10,
                   padding: 1,
                   width: 500,
+                  fontFamily: 'serif',
+                  fontSize: '16px',
                 }}
               >
                 <div
