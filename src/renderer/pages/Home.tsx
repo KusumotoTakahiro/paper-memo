@@ -76,7 +76,7 @@ const Home = () => {
         <Grid
           item
           xs={12}
-          sm={7}
+          sm={6}
           style={{
             marginTop: 70,
           }}
@@ -89,7 +89,7 @@ const Home = () => {
             ></PaperTable>
           )}
         </Grid>
-        <Grid item xs={12} sm={5}>
+        <Grid item xs={12} sm={6}>
           {/* <Grid
             container
             spacing={2}
