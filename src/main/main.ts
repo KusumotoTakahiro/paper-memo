@@ -9,6 +9,7 @@ import fileDialogFunctionListener from './functions/fileDialogFunction';
 import { electronStoreListener } from './functions/electronStore';
 import makedListner from './functions/makeMarkDown';
 import store from './functions/electronStore';
+import contextMenu from 'electron-context-menu';
 
 const DEFAULT_SIZE = {
   width: 1024,
@@ -155,3 +156,5 @@ app
     });
   })
   .catch(console.log);
+
+contextMenu();
