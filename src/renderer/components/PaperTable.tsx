@@ -66,7 +66,7 @@ const PaperTable = ({ pdfs = [], handleNowFile, setDirFlag }: Props) => {
   React.useEffect(() => {
     initMemoDir();
     console.log('papertable init memo dir!');
-  }, []);
+  }, [pdfs]);
 
   const handleMenuClick = (
     event: React.MouseEvent<HTMLButtonElement>,

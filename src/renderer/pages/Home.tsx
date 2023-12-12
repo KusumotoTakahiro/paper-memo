@@ -28,6 +28,7 @@ const Home = () => {
         await window.electron.fs.copyFile(path, savePath);
         console.log(path);
         console.log(savePath);
+        await readDirectory();
       });
     });
   }, []);
