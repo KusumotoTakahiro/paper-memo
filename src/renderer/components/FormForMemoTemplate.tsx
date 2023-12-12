@@ -5,6 +5,7 @@ import TextField from '@mui/material/TextField';
 import Button from '@mui/material/Button';
 import Paper from '@mui/material/Paper';
 import DOMPurify from 'dompurify';
+import MemoMarkdown from '../css/MemoMarkdown.scss';
 
 const FormForMemoTemplate = () => {
   const [memoContents, setMemoContents] = React.useState<string>('');
@@ -69,6 +70,7 @@ const FormForMemoTemplate = () => {
                 }}
               >
                 <div
+                  className="mymemo"
                   dangerouslySetInnerHTML={{
                     __html: memoHTML,
                   }}
