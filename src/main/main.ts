@@ -1,5 +1,13 @@
 import path from 'path';
-import { app, BrowserWindow, shell, ipcMain, dialog } from 'electron';
+import {
+  app,
+  BrowserWindow,
+  shell,
+  ipcMain,
+  dialog,
+  Menu,
+  MenuItem,
+} from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import { resolveHtmlPath } from './util';
@@ -157,4 +165,18 @@ app
   })
   .catch(console.log);
 
-contextMenu();
+contextMenu({
+  menu: (actions, props, browserWindow, dictionarySuggestions) => [
+    ...dictionarySuggestions,
+    actions.separator(),
+    actions.copyLink({
+      transform: (content) => `modified_link_${content}`,
+    }),
+    actions.separator(),
+    actions.copy({}),
+    actions.paste({}),
+    actions.cut({}),
+    actions.separator(),
+    actions.searchWithGoogle({}),
+  ],
+});

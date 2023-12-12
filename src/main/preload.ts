@@ -57,6 +57,9 @@ const electronHandler = {
       const isExist: boolean = await ipcRenderer.invoke('exist', [filePath]);
       return isExist;
     },
+    copyFile: async (srcPath: string, savePath: string) => {
+      await ipcRenderer.invoke('copy-file', ...[srcPath, savePath]);
+    },
   },
   PDFmetaData: {
     //これもCliFunctionsの一部だけど，移行するとめんどうなので放置.

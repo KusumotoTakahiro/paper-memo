@@ -7,6 +7,7 @@ import {
   existsSync,
   mkdirSync,
   statSync,
+  copyFileSync,
 } from 'fs';
 import * as path from 'path';
 
@@ -115,6 +116,12 @@ const makeDir = async (dirPath: string) => {
   return existDirectory;
 };
 
+const copyFile = async (srcPath: string, savePath: string) => {
+  try {
+    await copyFileSync(srcPath, savePath);
+  } catch (err) {}
+};
+
 /**---------------------- ここからset関数群 -----------------------------*/
 
 /**
@@ -190,6 +197,17 @@ const setIsExist = async () => {
   });
 };
 
+const setCopy = async () => {
+  await ipcMain.handle(
+    'copy-file',
+    async (event, srcPath: string, savePath: string) => {
+      try {
+        return copyFile(srcPath, savePath);
+      } catch (err) {}
+    },
+  );
+};
+
 /**
  * main.tsでトリガー登録を行う関数を展開する関数．
  */
@@ -200,6 +218,7 @@ const fsFunctionListener = async () => {
   await setIsDir();
   await setMakeDir();
   await setIsExist();
+  await setCopy();
 };
 
 export default fsFunctionListener;

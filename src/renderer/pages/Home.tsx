@@ -1,5 +1,6 @@
 import * as React from 'react';
 import Grid from '@mui/material/Grid';
+import { useDropzone } from 'react-dropzone';
 
 import SearchBar from '../components/SearchBar';
 import PaperTable from '../components/PaperTable';
@@ -15,6 +16,25 @@ const Home = () => {
     fileName: 'undefined',
     pages: -1,
     fileSize: '0',
+  });
+
+  const onDrop = React.useCallback(async (acceptedFiles: any) => {
+    await window.electron.electronStore.getlist().then((list) => {
+      window.electron.electronStore.getSelectedIndex().then(async (idx) => {
+        const droppedFile = acceptedFiles[0];
+        const path: string = droppedFile.path;
+        const name: string = droppedFile.name;
+        const savePath: string = `${list[idx]}\\${name}`;
+        await window.electron.fs.copyFile(path, savePath);
+        console.log(path);
+        console.log(savePath);
+      });
+    });
+  }, []);
+
+  const { getRootProps, getInputProps } = useDropzone({
+    onDrop,
+    noClick: true,
   });
 
   const searchPDF = (searchQuery: string) => {
@@ -72,25 +92,27 @@ const Home = () => {
 
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid
-          item
-          xs={12}
-          sm={6}
-          style={{
-            marginTop: 70,
-          }}
-        >
-          {pdfs?.length > 0 && (
-            <PaperTable
-              pdfs={pdfs}
-              handleNowFile={handleNowFile}
-              setDirFlag={setDelFlagRupper}
-            ></PaperTable>
-          )}
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          {/* <Grid
+      <div {...getRootProps()}>
+        <input {...getInputProps()} />
+        <Grid container spacing={2}>
+          <Grid
+            item
+            xs={12}
+            sm={6}
+            style={{
+              marginTop: 70,
+            }}
+          >
+            {pdfs?.length > 0 && (
+              <PaperTable
+                pdfs={pdfs}
+                handleNowFile={handleNowFile}
+                setDirFlag={setDelFlagRupper}
+              ></PaperTable>
+            )}
+          </Grid>
+          <Grid item xs={12} sm={6}>
+            {/* <Grid
             container
             spacing={2}
             direction="row-reverse"
@@ -101,9 +123,10 @@ const Home = () => {
               <SearchBar onSearch={searchPDF} />
             </Grid>
           </Grid> */}
-          <MemoMarkdown nowPdf={nowPdf} dirPath={dirPath} />
+            <MemoMarkdown nowPdf={nowPdf} dirPath={dirPath} />
+          </Grid>
         </Grid>
-      </Grid>
+      </div>
     </>
   );
 };
