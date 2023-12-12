@@ -1,0 +1,54 @@
+
+
+.mymemo {
+  p {
+    white-space: pre-wrap;
+    margin: 2px;
+    margin-bottom: 5px;
+    strong {
+      font-size: 1.2em;
+      font-weight: bold;
+      margin: 0px;
+      padding: 0px;
+    }
+  }
+  h1, h2, h3, h4, h5, h6 {
+    &:first-letter {
+      font-size: 115%;
+      color: #5f7acc;
+    }
+    margin: 0;
+    margin-top: 10px;
+    margin-bottom: 5px;
+    padding: 0;
+    border-bottom: 1px solid #A3A3A3;
+    padding: 0.2em 0.5em;
+    border-left: solid 5px #38519b;
+  }
+  blockquote { 
+    margin-top: 10px; 
+    margin-bottom: 10px; 
+    margin-left: 20px; 
+    padding-left: 10px; 
+    border-left: 3px solid #ccc; 
+    box-shadow: 2px 2px 3px #ccc;
+  }
+
+  strong {
+    font-weight: bold;
+  }
+
+  ul, ol {
+    color: black;
+    // border-top: 1mm ridge rgba(151, 190, 86, 0.6);/*上のボーダー*/
+    // border-bottom: 1mm ridge rgba(151, 190, 86, 0.6);/*下のボーダー*/
+    padding: 0.3em 0 0.3em 1.5em;
+    margin: 0;
+  }
+  
+  ul li, ol li {
+    line-height: 1.5;
+    padding: 0.2em 0;
+  }
+  
+}
