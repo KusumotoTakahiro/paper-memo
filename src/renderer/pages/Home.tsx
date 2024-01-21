@@ -21,13 +21,17 @@ const Home = () => {
   const onDrop = React.useCallback(async (acceptedFiles: any) => {
     await window.electron.electronStore.getlist().then((list) => {
       window.electron.electronStore.getSelectedIndex().then(async (idx) => {
-        const droppedFile = acceptedFiles[0];
-        const path: string = droppedFile.path;
-        const name: string = droppedFile.name;
-        const savePath: string = `${list[idx]}\\${name}`;
-        await window.electron.fs.copyFile(path, savePath);
-        console.log(path);
-        console.log(savePath);
+        let alertContent = '';
+        for (let i = 0; i < acceptedFiles.length; i++) {
+          const droppedFile = acceptedFiles[i];
+          const path: string = droppedFile.path;
+          const name: string = droppedFile.name;
+          const savePath: string = `${list[idx]}\\${name}`;
+          alertContent += '\n' + name;
+          await window.electron.fs.copyFile(path, savePath);
+        }
+        alert('save file : ' + alertContent);
+        setDirPath(list[idx]);
         await readDirectory();
       });
     });

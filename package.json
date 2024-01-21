@@ -110,6 +110,7 @@
     "encoding-japanese": "^2.0.0",
     "marked": "^11.0.0",
     "react": "^18.2.0",
+    "react-datepicker": "^4.24.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
     "react-router-dom": "^6.16.0"

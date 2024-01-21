@@ -5,6 +5,9 @@ import HomePage from './pages/Home';
 import CreatePage from './pages/Create';
 import SettingPage from './pages/Setting';
 import LogoutPage from './pages/logout';
+import WordCloud from './pages/WordCloud';
+import TaskManagement from './pages/TaskManagement';
+import AssignmentIcon from '@mui/icons-material/Assignment';
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -20,6 +23,7 @@ import Home from '@mui/icons-material/Home';
 import FormatListNumbered from '@mui/icons-material/FormatListNumbered';
 import SettingsIcon from '@mui/icons-material/Settings';
 import LogoutIcon from '@mui/icons-material/Logout';
+import FilterDramaIcon from '@mui/icons-material/FilterDrama';
 
 type Anchor = 'top' | 'left' | 'bottom' | 'right';
 
@@ -30,12 +34,14 @@ export default function TemporaryDrawer() {
 
   const iconList = [
     <Home />,
-    <FormatListNumbered />,
+    // <FormatListNumbered />,
+    <AssignmentIcon />,
     <SettingsIcon />,
+    <FilterDramaIcon />,
     <LogoutIcon />,
   ];
 
-  const routePath = ['#home', '#create', '#setting', '#logout'];
+  const routePath = ['#home', '#taskmanagement', '#setting', '#wordcloud'];
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -58,7 +64,7 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {['Home', 'index', 'setting', 'Logout'].map((text, index) => (
+        {['Home', 'MyTask', 'Setting', 'WordCloud'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton href={routePath[index]}>
               <ListItemIcon>{iconList[index]}</ListItemIcon>
@@ -99,6 +105,8 @@ export default function TemporaryDrawer() {
           <Route path="/create" element={<CreatePage />} />
           <Route path="/setting" element={<SettingPage />} />
           <Route path="/logout" element={<LogoutPage />} />
+          <Route path="/wordcloud" element={<WordCloud />}></Route>
+          <Route path="/taskmanagement" element={<TaskManagement />}></Route>
           <Route path="/" element={<HomePage />} />
         </Routes>
       </HashRouter>
