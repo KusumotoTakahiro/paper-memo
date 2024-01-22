@@ -24,6 +24,9 @@ import FormatColorTextIcon from '@mui/icons-material/FormatColorText';
 import TableRowsIcon from '@mui/icons-material/AppsOutlined';
 import CheckBoxIcon from '@mui/icons-material/CheckBoxOutlined';
 import CircleIcon from '@mui/icons-material/Circle';
+import FormatAlignLeftIcon from '@mui/icons-material/FormatAlignLeft';
+import FormatAlignCenterIcon from '@mui/icons-material/FormatAlignCenter';
+import FormatAlignRightIcon from '@mui/icons-material/FormatAlignRight';
 
 interface Props {
   nowPdf: PDFMetaData;
@@ -53,7 +56,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   const anchorRefTable = React.useRef<HTMLButtonElement>(null);
 
   const handleBackspace = () => {
-    const textarea = document.getElementById('tarea');
+    const textarea = document.getElementById('tarea') as HTMLTextAreaElement;
     const selectionStart = textarea.selectionStart;
     const selectionEnd = textarea.selectionEnd;
 
@@ -101,7 +104,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   };
 
   const wrapWithTag = (tag: string) => {
-    let textarea = document.getElementById('tarea');
+    let textarea = document.getElementById('tarea') as HTMLTextAreaElement;
     if (textarea) {
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
@@ -124,7 +127,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   };
 
   const wrapWithTag2 = (tag: string) => {
-    let textarea = document.getElementById('tarea');
+    let textarea = document.getElementById('tarea') as HTMLTextAreaElement;
     if (textarea) {
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
@@ -147,7 +150,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   };
 
   const wrapWithList = (tag: string) => {
-    let textarea = document.getElementById('tarea');
+    let textarea = document.getElementById('tarea') as HTMLTextAreaElement;
     if (textarea) {
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
@@ -175,7 +178,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   };
 
   const wrapWithNList = () => {
-    let textarea = document.getElementById('tarea');
+    let textarea = document.getElementById('tarea') as HTMLTextAreaElement;
     if (textarea) {
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
@@ -199,7 +202,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   };
 
   const wrapWithColor = () => {
-    let textarea = document.getElementById('tarea');
+    let textarea = document.getElementById('tarea') as HTMLTextAreaElement;
     if (textarea) {
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
@@ -223,25 +226,48 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   };
 
   const drawTable = (type: string) => {
-    let textarea = document.getElementById('tarea');
+    let textarea = document.getElementById('tarea') as HTMLTextAreaElement;
+    console.log(selectedText);
     if (textarea) {
       const selectionStart = textarea.selectionStart;
       const selectionEnd = textarea.selectionEnd;
-      let new_text = `| ${type} align | ${type} align | ${type} align |\n`;
-      if (type === 'left') {
-        new_text += `|:-----------|:------------|:------------|\n`;
-      } else if (type === 'center') {
-        new_text += `|-----------:|------------:|------------:|\n`;
-      } else if (type === 'right') {
-        new_text += `|:-----------:|:------------:|:------------:|\n`;
-      }
+      let new_text = `|`;
       if (textSelected) {
-        const words = selectedText.split(/\s+/);
-        for (let i = 0; i < words.length; i++) {
-          const word = words[i];
-          new_text += `| ${word} | ${word} | ${word} |`;
+        const lines = selectedText.split('\n');
+        // Tableのheader生成
+        for (let i = 0; i < lines[0].length; i++) {
+          new_text += `           |`;
         }
-      } else {
+        new_text += `\n|`;
+        // Tableのalign設定の生成
+        for (let i = 0; i < lines[0].length; i++) {
+          if (type === 'left') {
+            new_text += `:-----------|`;
+          } else if (type === 'center') {
+            new_text += `-----------:|`;
+          } else if (type === 'right') {
+            new_text += `:-----------:|`;
+          }
+        }
+        new_text += `\n|`;
+        for (let i = 0; i < lines.length; i++) {
+          let words = lines[i].split(/\s+/);
+          for (let j = 0; j < words.length; j++) {
+            new_text += ` ${words[j]} |`;
+          }
+          new_text += '\n';
+        }
+      }
+      // 文字列の選択がない場合は3行3列の表を生成.
+      else {
+        new_text = `|           |           |           |\n`;
+        if (type === 'left') {
+          new_text += `|:-----------|:------------|:------------|\n`;
+        } else if (type === 'center') {
+          new_text += `|-----------:|------------:|------------:|\n`;
+        } else if (type === 'right') {
+          new_text += `|:-----------:|:------------:|:------------:|\n`;
+        }
         new_text += `|           |           |           |`;
       }
       textarea.setRangeText(new_text, selectionStart, selectionEnd);
@@ -254,6 +280,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
     }
     setTextSelected(false);
     setSelectedText('');
+    setOpenTP(false);
   };
 
   const sanitize = (memoHTML: string) => {
@@ -325,23 +352,50 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
     setOpenCP(false);
   };
 
-  const handleClose = (event: Event | React.SyntheticEvent) => {
+  const handleTableClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    event.stopPropagation();
+    setOpenTP(!openTablePicker);
+    let textarea = document.getElementById('tarea') as HTMLTextAreaElement;
+    if (textarea) {
+      const selectionStart = textarea.selectionStart;
+      const selectionEnd = textarea.selectionEnd;
+      textarea.focus();
+      textarea.setSelectionRange(selectionStart, selectionEnd);
+    }
+  };
+
+  const handleCloseCP = (event: Event | React.SyntheticEvent) => {
     if (
       anchorRefColor.current &&
       anchorRefColor.current.contains(event.target as HTMLElement)
     ) {
       return;
     }
-
     setOpenCP(false);
   };
 
+  const handleCloseTP = (event: Event | React.SyntheticEvent) => {
+    if (
+      anchorRefColor.current &&
+      anchorRefColor.current.contains(event.target as HTMLElement)
+    ) {
+      return;
+    }
+    setOpenTP(false);
+  };
+
   const handleBlur = (event: any) => {
-    // テキストエリア内でのイベントでない場合に handleBlur を実行
+    if (event._isPropagationStopped) {
+      return;
+    }
+    if (event.relatedTarget === document.getElementsByClassName('ribon-btn')) {
+      return;
+    }
     if (!event.currentTarget.contains(event.relatedTarget)) {
       setExitEditor(true);
       setTextSelected(false);
       setSelectedText('');
+      console.log('Blured');
     }
   };
 
@@ -411,31 +465,31 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
         {watchMD === false ? (
           <>
             <div tabIndex={0} onBlur={handleBlur} onFocus={handleFocus}>
-              <ButtonGroup style={{ marginTop: 15 }} disabled={exitEditor}>
-                <Button
+              <ButtonGroup className="ribon ribon-btn" disabled={exitEditor}>
+                <IconButton
                   disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag('#');
                   }}
                 >
-                  h1
-                </Button>
-                <Button
+                  <span>h1</span>
+                </IconButton>
+                <IconButton
                   disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag('##');
                   }}
                 >
-                  h2
-                </Button>
-                <Button
+                  <span>h2</span>
+                </IconButton>
+                <IconButton
                   disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag('###');
                   }}
                 >
-                  h3
-                </Button>
+                  <span>h3</span>
+                </IconButton>
                 <IconButton
                   disabled={exitEditor}
                   onClick={() => {
@@ -492,10 +546,15 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <FormatQuoteIcon />
                 </IconButton>
                 <IconButton
+                  className="ribon-btn"
                   disabled={exitEditor}
-                  onClick={() => {
-                    drawTable('center');
-                  }}
+                  ref={anchorRefTable}
+                  aria-controls={
+                    openColorPicker ? 'compsition-menu' : undefined
+                  }
+                  aria-expanded={openColorPicker ? 'true' : undefined}
+                  aria-haspopup="true"
+                  onClick={handleTableClick}
                 >
                   <TableRowsIcon />
                 </IconButton>
@@ -509,27 +568,46 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                 </IconButton>
               </ButtonGroup>
               <Menu
-                anchorEl={anchorRefColor.current}
-                open={openColorPicker}
-                onClose={handleClose}
+                anchorEl={anchorRefTable.current}
+                open={openTablePicker}
+                onClose={handleCloseTP}
                 anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
                 transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+                className="tableMenu ribon-btn"
               >
                 <Grid container>
                   <Grid item>
-                    <MenuItem
-                      onClick={() => handleColorClick('black')}
-                      style={{ color: 'black' }}
-                    >
-                      <CircleIcon />
+                    <MenuItem onClick={() => drawTable('left')}>
+                      <FormatAlignLeftIcon />
                     </MenuItem>
                   </Grid>
+                  <Grid item>
+                    <MenuItem onClick={() => drawTable('center')}>
+                      <FormatAlignCenterIcon />
+                    </MenuItem>
+                  </Grid>
+                  <Grid item>
+                    <MenuItem onClick={() => drawTable('right')}>
+                      <FormatAlignRightIcon />
+                    </MenuItem>
+                  </Grid>
+                </Grid>
+              </Menu>
+              <Menu
+                anchorEl={anchorRefColor.current}
+                open={openColorPicker}
+                onClose={handleCloseCP}
+                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+                transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+                className="colorMenu ribon-btn"
+              >
+                <Grid container>
                   <Grid item>
                     <MenuItem
                       onClick={() => handleColorClick('crimson')}
                       style={{ color: 'crimson' }}
                     >
-                      <CircleIcon />
+                      <CircleIcon style={{ fontSize: '40px' }} />
                     </MenuItem>
                   </Grid>
                   <Grid item>
@@ -537,7 +615,15 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                       onClick={() => handleColorClick('dodgerblue')}
                       style={{ color: 'dodgerblue' }}
                     >
-                      <CircleIcon />
+                      <CircleIcon style={{ fontSize: '40px' }} />
+                    </MenuItem>
+                  </Grid>
+                  <Grid item>
+                    <MenuItem
+                      onClick={() => handleColorClick('saddlebrown')}
+                      style={{ color: 'saddlebrown' }}
+                    >
+                      <CircleIcon style={{ fontSize: '40px' }} />
                     </MenuItem>
                   </Grid>
                 </Grid>
@@ -547,7 +633,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                       onClick={() => handleColorClick('gold')}
                       style={{ color: 'gold' }}
                     >
-                      <CircleIcon />
+                      <CircleIcon style={{ fontSize: '40px' }} />
                     </MenuItem>
                   </Grid>
                   <Grid item>
@@ -555,7 +641,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                       onClick={() => handleColorClick('forestgreen')}
                       style={{ color: 'forestgreen' }}
                     >
-                      <CircleIcon />
+                      <CircleIcon style={{ fontSize: '40px' }} />
                     </MenuItem>
                   </Grid>
                   <Grid item>
@@ -563,7 +649,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                       onClick={() => handleColorClick('darkorange')}
                       style={{ color: 'darkorange' }}
                     >
-                      <CircleIcon />
+                      <CircleIcon style={{ fontSize: '40px' }} />
                     </MenuItem>
                   </Grid>
                 </Grid>

@@ -61,6 +61,42 @@
   }
 }
 
+.ribon {
+  border: solid 0px #A3A3A3;
+  button {
+    color: #413e3e;
+    border-radius: 50%;
+    background-color: #abb8de;
+    margin: 8px;
+    font-size: medium;
+    font-family: Georgia, 'Times New Roman', Times, serif;
+    span {
+      width: 25px;
+      height: 20px;
+      font-weight: bold;
+    }
+    &:disabled {
+      color: #413e3e;
+    }
+    &:hover {
+      background-color: #abb8de;
+      opacity: 0.7;
+      color: #030303;
+    }
+  }
+}
+
+.colorMenu {
+  ul {
+    padding: 0px;
+  }
+  li {
+    border: solid 1px rgb(134, 134, 134, 0.5);
+    width: 42px;
+    padding: 0;
+  }
+}
+
 .MuiTextField-root {
   textarea {
     caret-color: #38519b;
