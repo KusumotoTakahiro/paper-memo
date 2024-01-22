@@ -413,6 +413,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
             <div tabIndex={0} onBlur={handleBlur} onFocus={handleFocus}>
               <ButtonGroup style={{ marginTop: 15 }} disabled={exitEditor}>
                 <Button
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag('#');
                   }}
@@ -420,6 +421,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   h1
                 </Button>
                 <Button
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag('##');
                   }}
@@ -427,6 +429,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   h2
                 </Button>
                 <Button
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag('###');
                   }}
@@ -434,6 +437,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   h3
                 </Button>
                 <IconButton
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag2('**');
                   }}
@@ -441,6 +445,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <FormatBoldIcon />
                 </IconButton>
                 <IconButton
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag2('*');
                   }}
@@ -448,6 +453,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <FormatItalicIcon />
                 </IconButton>
                 <IconButton
+                  disabled={exitEditor}
                   ref={anchorRefColor}
                   aria-controls={
                     openColorPicker ? 'compsition-menu' : undefined
@@ -462,6 +468,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <FormatColorTextIcon />
                 </IconButton>
                 <IconButton
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithList('-');
                   }}
@@ -469,6 +476,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <FormatListBulletedIcon />
                 </IconButton>
                 <IconButton
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithNList();
                   }}
@@ -476,6 +484,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <FormatListNumberedIcon />
                 </IconButton>
                 <IconButton
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithTag('>');
                   }}
@@ -483,6 +492,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <FormatQuoteIcon />
                 </IconButton>
                 <IconButton
+                  disabled={exitEditor}
                   onClick={() => {
                     drawTable('center');
                   }}
@@ -490,6 +500,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   <TableRowsIcon />
                 </IconButton>
                 <IconButton
+                  disabled={exitEditor}
                   onClick={() => {
                     wrapWithList('- [ ] ');
                   }}
