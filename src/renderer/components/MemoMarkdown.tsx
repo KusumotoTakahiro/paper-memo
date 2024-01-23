@@ -17,6 +17,7 @@ import {
   MenuItem,
   Popper,
   ClickAwayListener,
+  TextareaAutosize,
 } from '@mui/material';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
@@ -48,6 +49,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   const [openColorPicker, setOpenCP] = React.useState<boolean>(false);
   const [openTablePicker, setOpenTP] = React.useState<boolean>(false);
   const [textColor, setTextColor] = React.useState<string>('black');
+  const [row, setRows] = React.useState<number>(25);
   const anchorRefColor = React.useRef<HTMLButtonElement>(null);
   const anchorRefTable = React.useRef<HTMLButtonElement>(null);
 
@@ -455,6 +457,18 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
       setTxtFilePath(filePath);
       await readTxtFile(filePath);
     };
+    const handleResize = () => {
+      // 画面の高さに基づいてrowsの値を設定
+      const screenHeight = window.innerHeight;
+      const newRowValue = Math.floor(screenHeight / 33); // 30は行の高さの適当な値
+      setRows(newRowValue);
+    };
+
+    // リサイズ時に処理を実行
+    window.addEventListener('resize', handleResize);
+
+    // 最初に一度実行
+    handleResize();
     fetchPdfData();
   }, [nowPdf, dirPath]);
 
@@ -704,7 +718,7 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
               </Popper>
               <TextField
                 multiline
-                rows={25}
+                rows={row}
                 style={{
                   width: '100%',
                   marginTop: 10,
