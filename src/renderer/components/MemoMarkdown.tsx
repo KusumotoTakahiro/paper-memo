@@ -612,19 +612,19 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                 <ClickAwayListener onClickAway={handleCloseTP}>
                   <ButtonGroup className="ribon ribon-btn">
                     <IconButton
-                      className="ribon-btn"
+                      className="ribon-btn table-btn"
                       onClick={() => drawTable('left')}
                     >
                       <FormatAlignLeftIcon />
                     </IconButton>
                     <IconButton
-                      className="ribon-btn"
+                      className="ribon-btn table-btn"
                       onClick={() => drawTable('center')}
                     >
                       <FormatAlignCenterIcon />
                     </IconButton>
                     <IconButton
-                      className="ribon-btn"
+                      className="ribon-btn table-btn"
                       onClick={() => drawTable('right')}
                     >
                       <FormatAlignRightIcon />
@@ -632,68 +632,76 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
                   </ButtonGroup>
                 </ClickAwayListener>
               </Popper>
-              <Menu
-                anchorEl={anchorRefColor.current}
+              <Popper
                 open={openColorPicker}
-                onClose={handleCloseCP}
-                anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-                transformOrigin={{ vertical: 'top', horizontal: 'center' }}
+                anchorEl={anchorRefColor.current}
+                role={undefined}
+                placement="bottom"
                 className="colorMenu"
                 id="my-menu"
               >
-                <Grid container>
-                  <Grid item>
-                    <MenuItem
-                      onClick={() => handleColorClick('crimson')}
-                      style={{ color: 'crimson' }}
-                    >
-                      <CircleIcon style={{ fontSize: '40px' }} />
-                    </MenuItem>
+                <ClickAwayListener onClickAway={handleCloseCP}>
+                  <Grid
+                    container
+                    direction="column"
+                    justifyContent="center"
+                    alignItems="center"
+                    className="color-grid"
+                    spacing={0}
+                  >
+                    <Grid item className="color-grid-item">
+                      <ButtonGroup className="color-btns">
+                        <IconButton
+                          className="color-btn"
+                          onClick={() => handleColorClick('crimson')}
+                          style={{ color: 'crimson' }}
+                        >
+                          <CircleIcon style={{ fontSize: '40px' }} />
+                        </IconButton>
+                        <IconButton
+                          className="color-btn"
+                          onClick={() => handleColorClick('dodgerblue')}
+                          style={{ color: 'dodgerblue' }}
+                        >
+                          <CircleIcon style={{ fontSize: '40px' }} />
+                        </IconButton>
+                        <IconButton
+                          className="color-btn"
+                          onClick={() => handleColorClick('saddlebrown')}
+                          style={{ color: 'saddlebrown' }}
+                        >
+                          <CircleIcon style={{ fontSize: '40px' }} />
+                        </IconButton>
+                      </ButtonGroup>
+                    </Grid>
+                    <Grid item>
+                      <ButtonGroup className="color-btns">
+                        <IconButton
+                          className="color-btn"
+                          onClick={() => handleColorClick('gold')}
+                          style={{ color: 'gold' }}
+                        >
+                          <CircleIcon style={{ fontSize: '40px' }} />
+                        </IconButton>
+                        <IconButton
+                          className="color-btn"
+                          onClick={() => handleColorClick('forestgreen')}
+                          style={{ color: 'forestgreen' }}
+                        >
+                          <CircleIcon style={{ fontSize: '40px' }} />
+                        </IconButton>
+                        <IconButton
+                          className="color-btn"
+                          onClick={() => handleColorClick('darkorange')}
+                          style={{ color: 'darkorange' }}
+                        >
+                          <CircleIcon style={{ fontSize: '40px' }} />
+                        </IconButton>
+                      </ButtonGroup>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <MenuItem
-                      onClick={() => handleColorClick('dodgerblue')}
-                      style={{ color: 'dodgerblue' }}
-                    >
-                      <CircleIcon style={{ fontSize: '40px' }} />
-                    </MenuItem>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem
-                      onClick={() => handleColorClick('saddlebrown')}
-                      style={{ color: 'saddlebrown' }}
-                    >
-                      <CircleIcon style={{ fontSize: '40px' }} />
-                    </MenuItem>
-                  </Grid>
-                </Grid>
-                <Grid container>
-                  <Grid item>
-                    <MenuItem
-                      onClick={() => handleColorClick('gold')}
-                      style={{ color: 'gold' }}
-                    >
-                      <CircleIcon style={{ fontSize: '40px' }} />
-                    </MenuItem>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem
-                      onClick={() => handleColorClick('forestgreen')}
-                      style={{ color: 'forestgreen' }}
-                    >
-                      <CircleIcon style={{ fontSize: '40px' }} />
-                    </MenuItem>
-                  </Grid>
-                  <Grid item>
-                    <MenuItem
-                      onClick={() => handleColorClick('darkorange')}
-                      style={{ color: 'darkorange' }}
-                    >
-                      <CircleIcon style={{ fontSize: '40px' }} />
-                    </MenuItem>
-                  </Grid>
-                </Grid>
-              </Menu>
+                </ClickAwayListener>
+              </Popper>
               <TextField
                 multiline
                 rows={25}

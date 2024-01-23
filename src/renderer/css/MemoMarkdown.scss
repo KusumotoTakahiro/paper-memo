@@ -84,17 +84,35 @@
       color: #030303;
     }
   }
+  .table-btn {
+    background-color: #041855;
+    color: #ffffff;
+    &:hover {
+      background-color: #18285a;
+      color: #ffffff;
+      opacity: 0.7;
+    }
+  }
 }
 
+
+
 .colorMenu {
-  ul {
-    padding: 0px;
-  }
-  li {
-    border: solid 1px rgb(134, 134, 134, 0.5);
-    width: 42px;
+  .color-btns {
+    margin: 1;
     padding: 0;
     background-color: rgba(255, 255, 255, 0);
+    .color-btn {
+      background-color: rgba(255, 255, 255, 0);
+      margin: 2px;
+      padding: 0;
+      opacity: 1;
+      border: solid 1px;
+      &:hover {
+        opacity: 0.9;
+        background-color: rgba(33, 113, 233, 0.3);
+      }
+    }
   }
 }
 
