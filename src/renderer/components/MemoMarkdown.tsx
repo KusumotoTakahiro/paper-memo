@@ -36,14 +36,6 @@ interface Props {
   dirPath: string;
 }
 
-const myTextAreaStyle = {
-  width: '100%',
-  marginTop: 10,
-  padding: 0,
-  fontFamily: 'serif',
-  fontSize: '16px',
-};
-
 const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
   const [init, setInit] = React.useState<boolean>(false);
   const [memoContents, setMemoContents] = React.useState<string>('');
@@ -705,7 +697,13 @@ const MemoMarkdown = ({ nowPdf, dirPath }: Props) => {
               <TextField
                 multiline
                 rows={25}
-                style={myTextAreaStyle}
+                style={{
+                  width: '100%',
+                  marginTop: 10,
+                  padding: 0,
+                  fontFamily: 'serif',
+                  fontSize: '16px',
+                }}
                 onChange={handleOnChange}
                 onKeyDown={handleKeyDown}
                 onSelect={handleSelect}

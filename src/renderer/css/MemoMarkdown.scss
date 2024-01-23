@@ -94,11 +94,14 @@
     border: solid 1px rgb(134, 134, 134, 0.5);
     width: 42px;
     padding: 0;
+    background-color: rgba(255, 255, 255, 0);
   }
 }
 
+
+// caretの設定
 .MuiTextField-root {
   textarea {
-    caret-color: #38519b;
+    caret-color: #1c9ad4;
   }
 }
