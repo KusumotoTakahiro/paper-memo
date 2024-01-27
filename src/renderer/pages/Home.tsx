@@ -5,6 +5,7 @@ import { useDropzone } from 'react-dropzone';
 import SearchBar from '../components/SearchBar';
 import PaperTable from '../components/PaperTable';
 import MemoMarkdown from '../components/MemoMarkdown';
+import Reload from '../components/Reload';
 import { PDFMetaData } from '../../common/types';
 
 const Home = () => {
@@ -84,7 +85,7 @@ const Home = () => {
       });
   };
 
-  React.useEffect(() => {
+  const refleshWindow = () => {
     window.electron.electronStore.getlist().then((list) => {
       window.electron.electronStore.getSelectedIndex().then((idx) => {
         setDirPath(list[idx]);
@@ -93,6 +94,10 @@ const Home = () => {
         }
       });
     });
+  };
+
+  React.useEffect(() => {
+    refleshWindow();
   }, [dirPath, delFlag]);
 
   return (
@@ -131,6 +136,7 @@ const Home = () => {
             <MemoMarkdown nowPdf={nowPdf} dirPath={dirPath} />
           </Grid>
         </Grid>
+        <Reload reloadAction={refleshWindow} />
       </div>
     </>
   );
