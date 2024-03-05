@@ -11,7 +11,7 @@ import { PDFMetaData } from '../../common/types';
 const Home = () => {
   const [dirPath, setDirPath] = React.useState<string>('');
   const [pdfs, setPdfs] = React.useState<PDFMetaData[]>([]);
-  const [delFlag, setDelFlag] = React.useState<number>(0);
+  const [delFlag, setDelFlag] = React.useState<number>(0); //ファイルを削除する際にリロードを行うためのフラグ
   const [winSize, setWinSize] = React.useState<Number[]>([0, 0]);
   const [nowPdf, setNowPdf] = React.useState<PDFMetaData>({
     fileName: 'undefined',
