@@ -8,6 +8,7 @@ import LogoutPage from './pages/logout';
 import WordCloud from './pages/WordCloud';
 import TaskManagement from './pages/TaskManagement';
 import AssignmentIcon from '@mui/icons-material/Assignment';
+import FlashAlert from './components/FlashAlert';
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -31,6 +32,23 @@ export default function TemporaryDrawer() {
   const [state, setState] = React.useState({
     left: false,
   });
+  const [severity, setSeverity] = React.useState('info');
+  const [message, setMessage] = React.useState('');
+  const [nowDate, setNowDate] = React.useState('0');
+  const [alertTitle, setAlertTitle] = React.useState('');
+  const showFlashAlert = (
+    severity: string,
+    message: string,
+    alertTitle: string,
+  ) => {
+    setSeverity(severity);
+    setMessage(message);
+    setAlertTitle(alertTitle);
+    if (alertTitle === '') {
+      setAlertTitle(severity);
+    }
+    setNowDate(String(Date.now()));
+  };
 
   const iconList = [
     <Home />,
@@ -92,6 +110,12 @@ export default function TemporaryDrawer() {
       >
         <Menu />
       </Fab>
+      <FlashAlert
+        severity={severity}
+        message={message}
+        createdAt={nowDate}
+        alertTitle={alertTitle}
+      />
       <Drawer
         anchor={'left'}
         open={state['left']}
@@ -101,13 +125,19 @@ export default function TemporaryDrawer() {
       </Drawer>
       <HashRouter>
         <Routes>
-          <Route path="/home" element={<HomePage />} />
+          <Route
+            path="/home"
+            element={<HomePage showFlashAlert={showFlashAlert} />}
+          />
           <Route path="/create" element={<CreatePage />} />
           <Route path="/setting" element={<SettingPage />} />
           <Route path="/logout" element={<LogoutPage />} />
           <Route path="/wordcloud" element={<WordCloud />}></Route>
           <Route path="/taskmanagement" element={<TaskManagement />}></Route>
-          <Route path="/" element={<HomePage />} />
+          <Route
+            path="/"
+            element={<HomePage showFlashAlert={showFlashAlert} />}
+          />
         </Routes>
       </HashRouter>
     </>

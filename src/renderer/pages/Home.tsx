@@ -8,11 +8,18 @@ import MemoMarkdown from '../components/MemoMarkdown';
 import Reload from '../components/Reload';
 import { PDFMetaData } from '../../common/types';
 
-const Home = () => {
+interface Props {
+  showFlashAlert: (
+    severity: string,
+    message: string,
+    alertTitle: string,
+  ) => void;
+}
+
+const Home = ({ showFlashAlert }: Props) => {
   const [dirPath, setDirPath] = React.useState<string>('');
   const [pdfs, setPdfs] = React.useState<PDFMetaData[]>([]);
   const [delFlag, setDelFlag] = React.useState<number>(0); //ファイルを削除する際にリロードを行うためのフラグ
-  const [winSize, setWinSize] = React.useState<Number[]>([0, 0]);
   const [nowPdf, setNowPdf] = React.useState<PDFMetaData>({
     fileName: 'undefined',
     pages: -1,
@@ -31,9 +38,14 @@ const Home = () => {
           alertContent += '\n' + name;
           await window.electron.fs.copyFile(path, savePath);
         }
-        alert('save file : ' + alertContent);
+        showFlashAlert(
+          'success',
+          alertContent + 'を保存しました',
+          '【Save File】',
+        );
         setDirPath(list[idx]);
         await readDirectory();
+        refleshWindow();
       });
     });
   }, []);
@@ -96,6 +108,11 @@ const Home = () => {
     });
   };
 
+  const refleshWindowPlus = () => {
+    refleshWindow();
+    showFlashAlert('info', '画面をリフレッシュしました。', '【Reflesh】');
+  };
+
   React.useEffect(() => {
     refleshWindow();
   }, [dirPath, delFlag]);
@@ -118,6 +135,7 @@ const Home = () => {
                 pdfs={pdfs}
                 handleNowFile={handleNowFile}
                 setDirFlag={setDelFlagRupper}
+                showFlashAlert={showFlashAlert}
               ></PaperTable>
             )}
           </Grid>
@@ -136,7 +154,7 @@ const Home = () => {
             <MemoMarkdown nowPdf={nowPdf} dirPath={dirPath} />
           </Grid>
         </Grid>
-        <Reload reloadAction={refleshWindow} />
+        <Reload reloadAction={refleshWindowPlus} />
       </div>
     </>
   );

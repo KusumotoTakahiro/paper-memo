@@ -18,9 +18,19 @@ interface Props {
   pdfs: PDFMetaData[];
   handleNowFile: (pdf: PDFMetaData) => void;
   setDirFlag: () => void;
+  showFlashAlert: (
+    severity: string,
+    message: string,
+    alertTitle: string,
+  ) => void;
 }
 
-const PaperTable = ({ pdfs = [], handleNowFile, setDirFlag }: Props) => {
+const PaperTable = ({
+  pdfs = [],
+  handleNowFile,
+  setDirFlag,
+  showFlashAlert,
+}: Props) => {
   const [dense, setDense] = React.useState(false);
   const [selectedIndex, setSelectedIndex] = React.useState(-1);
   const [dirPath, setDirPath] = React.useState('');
@@ -104,6 +114,7 @@ const PaperTable = ({ pdfs = [], handleNowFile, setDirFlag }: Props) => {
                 filePath={`${dirPath}\\${pdfs[index]?.fileName}`}
                 dirPath={dirPath}
                 setDirFlag={setDirFlag}
+                showFlashAlert={showFlashAlert}
               ></ContextMenu>
             ) : (
               <></>

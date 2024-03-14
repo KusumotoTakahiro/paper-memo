@@ -15,9 +15,19 @@ interface Props {
   filePath: string;
   dirPath: string;
   setDirFlag: () => void;
+  showFlashAlert: (
+    severity: string,
+    message: string,
+    alertTitle: string,
+  ) => void;
 }
 
-const ContextMenu = ({ filePath, dirPath, setDirFlag }: Props) => {
+const ContextMenu = ({
+  filePath,
+  dirPath,
+  setDirFlag,
+  showFlashAlert,
+}: Props) => {
   const [anchorEl, setAnchorEl] = React.useState<null | HTMLElement>(null);
   const [dialogOpen, setDialogOpen] = React.useState<boolean>(false);
   const open = Boolean(anchorEl);
@@ -112,6 +122,11 @@ const ContextMenu = ({ filePath, dirPath, setDirFlag }: Props) => {
               await delFile();
               await setDialogOpen(false);
               await setDirFlag();
+              showFlashAlert(
+                'error',
+                'ファイルを削除しました',
+                '【Delete File】',
+              );
             }}
           >
             削除
