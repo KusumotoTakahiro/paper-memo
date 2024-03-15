@@ -41,7 +41,7 @@ const Home = ({ showFlashAlert }: Props) => {
         showFlashAlert(
           'success',
           alertContent + 'を保存しました',
-          '【Save File】',
+          'File Saved',
         );
         setDirPath(list[idx]);
         await readDirectory();
@@ -110,7 +110,7 @@ const Home = ({ showFlashAlert }: Props) => {
 
   const refleshWindowPlus = () => {
     refleshWindow();
-    showFlashAlert('info', '画面をリフレッシュしました。', '【Reflesh】');
+    showFlashAlert('info', '画面をリフレッシュしました。', 'Screen Reflesh');
   };
 
   React.useEffect(() => {

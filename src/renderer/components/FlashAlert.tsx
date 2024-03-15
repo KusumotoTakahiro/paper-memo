@@ -30,7 +30,7 @@ const FlashAlert = ({
           'endflashAlert' + String(Number(Date.now()) - Number(createdAt)),
         );
       }
-    }, 3000);
+    }, 4000);
     console.log('flashAlert');
     return () => {
       isMounted = false;
@@ -41,8 +41,9 @@ const FlashAlert = ({
   const alertStyle = (): React.CSSProperties => {
     return {
       position: 'fixed',
-      bottom: 30,
-      left: 30,
+      bottom: 40,
+      // left: 30,
+      right: 40,
       zIndex: 999,
       margin: '0px',
       width: '30%',
@@ -50,7 +51,7 @@ const FlashAlert = ({
   };
 
   const NowAlert = () => (
-    <Alert severity={severity} style={alertStyle()}>
+    <Alert variant="filled" severity={severity} style={alertStyle()}>
       <AlertTitle>{alertTitle}</AlertTitle>
       {message}
     </Alert>

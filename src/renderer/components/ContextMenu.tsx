@@ -46,7 +46,21 @@ const ContextMenu = ({
   };
 
   const delFile = async () => {
-    await window.electron.cliFunctions.delFile(filePath);
+    await window.electron.cliFunctions
+      .delFile(filePath)
+      .then((res) => {
+        if (res === true)
+          showFlashAlert('success', 'ファイルを削除しました', 'File Delete');
+        else
+          showFlashAlert(
+            'error',
+            'ファイルの削除に失敗しました',
+            'File Delete',
+          );
+      })
+      .catch((e) => {
+        showFlashAlert('error', 'ファイルの削除に失敗しました', 'File Delete');
+      });
   };
 
   return (
@@ -122,11 +136,6 @@ const ContextMenu = ({
               await delFile();
               await setDialogOpen(false);
               await setDirFlag();
-              showFlashAlert(
-                'error',
-                'ファイルを削除しました',
-                '【Delete File】',
-              );
             }}
           >
             削除
