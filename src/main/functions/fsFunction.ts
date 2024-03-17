@@ -10,6 +10,7 @@ import {
   copyFileSync,
 } from 'fs';
 import * as path from 'path';
+import buildTokenizer from './myTokenizer';
 
 /**
  * フォルダを読み込んで中のPDFを返す関数
@@ -55,6 +56,91 @@ const readTxtFile = async (filePath: string) => {
     return txtFile;
   } catch (err) {
     return '';
+  }
+};
+
+/**
+ * フォルダー内のテキストファイルで個別にtfidf値を求めて返す関数
+ * @param dirPath
+ * @returns　allDocumentsTFIDF:{ text: string; tfidf: number }[][]
+ */
+const readTxtFiles = async (dirPath: string) => {
+  type WordDocMap = Map<string, Set<number>>;
+  type tfidfArray = { text: string; tfidf: number }[][];
+  try {
+    const pdfs = await readFolderPDF(dirPath);
+    let fileName = '';
+    let fl = 0;
+    let filePath;
+    let txt = '';
+    let tokens = [];
+    let tokensTF = [];
+    let allDocumentsTFIDF: tfidfArray = [[]];
+    let allDocumentsTF = [];
+    let wordDocMap: WordDocMap = new Map();
+    let idfMap: Map<string, number> = new Map();
+    const tokenizer = await buildTokenizer();
+    for (let i = 0; i < pdfs.length; i++) {
+      fileName = pdfs[i];
+      fl = fileName.length;
+      filePath = dirPath + '\\Memo\\' + fileName.slice(0, fl - 4) + '.txt';
+      txt = await readTxtFile(filePath);
+      // ここで，TF-IDFの計算で不要な単語の除去すべき
+      tokens = tokenizer.tokenize(txt);
+      // TFの計算
+      tokensTF = tokens
+        .filter((t) => t.pos === '名詞')
+        .map((t) => (t.basic_form === '*' ? t.surface_form : t.basic_form))
+        .reduce((data: { text: string; tf: number }[], text: string) => {
+          const target = data.find((c) => c.text === text);
+          if (target) {
+            target.tf = target.tf + 1;
+          } else {
+            data.push({
+              text,
+              tf: 1,
+            });
+          }
+          return data;
+        }, []);
+      allDocumentsTF.push(tokensTF);
+    }
+    // IDFの計算
+    for (let i = 0; i < allDocumentsTF.length; i++) {
+      const nowDoc = allDocumentsTF[i];
+      for (let j = 0; j < nowDoc.length; j++) {
+        const word = nowDoc[j].text;
+        if (!wordDocMap.has(word)) {
+          wordDocMap.set(word, new Set());
+        }
+        wordDocMap.get(word)!.add(i);
+      }
+    }
+    wordDocMap.forEach((docIndexes, word) => {
+      const df = docIndexes.size;
+      const idf = Math.log(allDocumentsTF.length / df) + 1;
+      idfMap.set(word, idf);
+    });
+    // TF-IDFの計算
+    for (let i = 0; i < allDocumentsTF.length; i++) {
+      const nowDoc = allDocumentsTF[i];
+      let tempDoc: { text: string; tfidf: number }[] = [];
+      for (let j = 0; j < nowDoc.length; j++) {
+        let t = nowDoc[j];
+        let tempWord: { text: string; tfidf: number } = {
+          text: 'word',
+          tfidf: 0,
+        };
+        tempWord.text = t.text;
+        tempWord.tfidf = t.tf * idfMap.get(t.text)!;
+        tempDoc.push(tempWord);
+      }
+      allDocumentsTFIDF.push(tempDoc);
+    }
+    return allDocumentsTFIDF;
+  } catch (err) {
+    console.log(err);
+    return [];
   }
 };
 
@@ -154,13 +240,20 @@ const setWriteTxtFile = async () => {
   );
 };
 
-/**
- * 文字列read-fileをreadTxtFile()のトリガーとして登録しておく関数
- */
 const setReadTxtFile = async () => {
   await ipcMain.handle('read-file', async (event, [filePath]: string) => {
     try {
       return await readTxtFile(filePath);
+    } catch (err) {
+      return;
+    }
+  });
+};
+
+const setReadTxtFiles = async () => {
+  await ipcMain.handle('read-all-file', async (event, [dirPath]: string) => {
+    try {
+      return await readTxtFiles(dirPath);
     } catch (err) {
       return;
     }
@@ -219,6 +312,7 @@ const fsFunctionListener = async () => {
   await setMakeDir();
   await setIsExist();
   await setCopy();
+  await setReadTxtFiles();
 };
 
 export default fsFunctionListener;

@@ -61,8 +61,10 @@ const delFile = async (filePath: string) => {
     await exec(`del ${filePath}`, {
       encoding: 'Shift_JIS',
     });
+    return true;
   } catch (err) {
     console.log(err);
+    return false;
   }
 };
 

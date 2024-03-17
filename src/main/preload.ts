@@ -45,6 +45,12 @@ const electronHandler = {
       const data: string = await ipcRenderer.invoke('read-file', [filePath]);
       return data;
     },
+    readTxtFiles: async (dirPath: string) => {
+      const data: string[][] = await ipcRenderer.invoke('read-all-file', [
+        dirPath,
+      ]);
+      return data;
+    },
     isDir: async (filePath: string) => {
       const isDirectory = await ipcRenderer.invoke('is-dir', [filePath]);
       return isDirectory;
@@ -76,7 +82,10 @@ const electronHandler = {
       await ipcRenderer.invoke('open-by-browser', [filePath]);
     },
     delFile: async (filePath: string) => {
-      await ipcRenderer.invoke('del-file', [filePath]);
+      const isDeleted: boolean = await ipcRenderer.invoke('del-file', [
+        filePath,
+      ]);
+      return isDeleted;
     },
   },
   fileDialog: {
