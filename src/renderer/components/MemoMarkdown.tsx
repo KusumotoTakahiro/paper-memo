@@ -7,17 +7,12 @@ import { PDFMetaData } from '../../common/types';
 import '../css/MemoMarkdown.scss';
 import {
   ButtonGroup,
-  Button,
   IconButton,
   Grid,
   Fade,
   TextField,
-  Menu,
-  MenuList,
-  MenuItem,
   Popper,
   ClickAwayListener,
-  TextareaAutosize,
 } from '@mui/material';
 import FormatBoldIcon from '@mui/icons-material/FormatBold';
 import FormatItalicIcon from '@mui/icons-material/FormatItalic';
