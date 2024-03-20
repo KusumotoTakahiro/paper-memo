@@ -9,8 +9,10 @@ import {
   statSync,
   copyFileSync,
 } from 'fs';
+import store from './electronStore';
 import * as path from 'path';
 import buildTokenizer from './myTokenizer';
+import cleaningToken from './cleaning';
 
 /**
  * フォルダを読み込んで中のPDFを返す関数
@@ -79,19 +81,29 @@ const readTxtFiles = async (dirPath: string) => {
     let allDocumentsTF = [];
     let wordDocMap: WordDocMap = new Map();
     let idfMap: Map<string, number> = new Map();
+    const memoTemp = store.get('memoTemplate', '');
     const tokenizer = await buildTokenizer();
+    const stopWord = tokenizer
+      .tokenize(memoTemp)
+      .filter((t) => t.pos === '名詞')
+      .map((t) => (t.basic_form === '*' ? t.surface_form : t.basic_form));
     for (let i = 0; i < pdfs.length; i++) {
       fileName = pdfs[i];
       fl = fileName.length;
       filePath = dirPath + '\\Memo\\' + fileName.slice(0, fl - 4) + '.txt';
       txt = await readTxtFile(filePath);
-      // ここで，TF-IDFの計算で不要な単語の除去すべき
       tokens = tokenizer.tokenize(txt);
       // TFの計算
       tokensTF = tokens
         .filter((t) => t.pos === '名詞')
         .map((t) => (t.basic_form === '*' ? t.surface_form : t.basic_form))
         .reduce((data: { text: string; tf: number }[], text: string) => {
+          if (stopWord.includes(text)) {
+            return data;
+          }
+          if (cleaningToken(text)) {
+            return data;
+          }
           const target = data.find((c) => c.text === text);
           if (target) {
             target.tf = target.tf + 1;
