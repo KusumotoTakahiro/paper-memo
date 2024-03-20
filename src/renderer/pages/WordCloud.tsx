@@ -1,9 +1,12 @@
 import * as React from 'react';
 import { Grid } from '@mui/material';
+import WordCloudCard from '../components/WordCloudCard';
 
 const WordCloud = () => {
   const [dirPath, setDirPath] = React.useState<string>('');
-  const [allDocuments, setAllDocuments] = React.useState<string[][]>([]);
+  const [allDocuments, setAllDocuments] = React.useState<
+    { name: string; value: number }[][]
+  >([]);
 
   const refleshWindow = () => {
     window.electron.electronStore.getlist().then((list) => {
@@ -19,16 +22,27 @@ const WordCloud = () => {
     });
   };
 
+  const generate = () => {
+    return allDocuments.map((doc, index) => (
+      <Grid item sm={4}>
+        <WordCloudCard tfidfTokens={doc} />
+      </Grid>
+    ));
+  };
+
   React.useEffect(() => {
     refleshWindow();
   }, [dirPath]);
 
   return (
     <>
-      <Grid container spacing={2}>
-        <Grid item sm={6}></Grid>
-        <Grid item sm={6}></Grid>
-      </Grid>
+      {allDocuments.length === 0 ? (
+        <>データ更新中</>
+      ) : (
+        <Grid container spacing={2}>
+          {generate()}
+        </Grid>
+      )}
     </>
   );
 };

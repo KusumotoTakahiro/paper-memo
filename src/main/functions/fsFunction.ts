@@ -68,7 +68,8 @@ const readTxtFile = async (filePath: string) => {
  */
 const readTxtFiles = async (dirPath: string) => {
   type WordDocMap = Map<string, Set<number>>;
-  type tfidfArray = { text: string; tfidf: number }[][];
+  type tfidfToken = { name: string; value: number }; //echartに合わせてる
+  type tfidfArray = tfidfToken[][];
   try {
     const pdfs = await readFolderPDF(dirPath);
     let fileName = '';
@@ -136,15 +137,15 @@ const readTxtFiles = async (dirPath: string) => {
     // TF-IDFの計算
     for (let i = 0; i < allDocumentsTF.length; i++) {
       const nowDoc = allDocumentsTF[i];
-      let tempDoc: { text: string; tfidf: number }[] = [];
+      let tempDoc: tfidfToken[] = [];
       for (let j = 0; j < nowDoc.length; j++) {
         let t = nowDoc[j];
-        let tempWord: { text: string; tfidf: number } = {
-          text: 'word',
-          tfidf: 0,
+        let tempWord: tfidfToken = {
+          name: 'word',
+          value: 0,
         };
-        tempWord.text = t.text;
-        tempWord.tfidf = t.tf * idfMap.get(t.text)!;
+        tempWord.name = t.text;
+        tempWord.value = t.tf * idfMap.get(t.text)!;
         tempDoc.push(tempWord);
       }
       allDocumentsTFIDF.push(tempDoc);

@@ -46,9 +46,8 @@ const electronHandler = {
       return data;
     },
     readTxtFiles: async (dirPath: string) => {
-      const data: string[][] = await ipcRenderer.invoke('read-all-file', [
-        dirPath,
-      ]);
+      const data: { name: string; value: number }[][] =
+        await ipcRenderer.invoke('read-all-file', [dirPath]);
       return data;
     },
     isDir: async (filePath: string) => {
