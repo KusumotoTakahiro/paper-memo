@@ -1,14 +1,16 @@
 import * as React from 'react';
-import { Box, Card, CardActionArea, Typography } from '@mui/material';
+import { Card, CardActionArea, Typography, Button } from '@mui/material';
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
 import { document } from '../../common/types';
 
 interface Props {
   document: document;
+  displayNowMemo: (memo: document) => void;
+  open: boolean;
 }
 
-const WordCloudCard = ({ document }: Props) => {
+const WordCloudCard = ({ document, displayNowMemo, open }: Props) => {
   const chartRef = React.useRef(null); // ref を作成
   React.useEffect(() => {
     if (chartRef.current) {
@@ -96,6 +98,9 @@ const WordCloudCard = ({ document }: Props) => {
         <Typography sx={{ position: 'absolute', bottom: 0, right: 10 }}>
           文字数 : {document.fileContent.length}字
         </Typography>
+        <CardActionArea sx={{ position: 'absolute', bottom: 20 }}>
+          <Button onClick={(e) => displayNowMemo(document)}>編集</Button>
+        </CardActionArea>
       </Card>
     </>
   );

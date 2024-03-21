@@ -118,7 +118,8 @@
     "react-datepicker": "^4.24.0",
     "react-dom": "^18.2.0",
     "react-dropzone": "^14.2.3",
-    "react-router-dom": "^6.16.0"
+    "react-router-dom": "^6.16.0",
+    "react-spring": "^9.7.3"
   },
   "devDependencies": {
     "@electron/notarize": "^2.1.0",

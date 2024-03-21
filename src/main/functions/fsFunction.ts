@@ -168,6 +168,7 @@ const readTxtFiles = async (dirPath: string) => {
         tempDoc.fileContent = txt;
         tempDoc.wordNumber = tokenizer.tokenize(txt).length;
       });
+      tempDoc.filePath = dirPath;
       documents.push(tempDoc);
     }
     return documents;
