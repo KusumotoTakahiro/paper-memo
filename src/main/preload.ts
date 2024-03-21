@@ -1,7 +1,7 @@
 // Disable no-unused-vars, broken for spread args
 /* eslint no-unused-vars: off */
 import { contextBridge, ipcRenderer, IpcRendererEvent } from 'electron';
-import { MemoContent } from '../common/types';
+import { document } from '../common/types';
 
 export type Channels = 'ipc-example';
 
@@ -46,8 +46,9 @@ const electronHandler = {
       return data;
     },
     readTxtFiles: async (dirPath: string) => {
-      const data: { name: string; value: number }[][] =
-        await ipcRenderer.invoke('read-all-file', [dirPath]);
+      const data: document[] = await ipcRenderer.invoke('read-all-file', [
+        dirPath,
+      ]);
       return data;
     },
     isDir: async (filePath: string) => {

@@ -13,6 +13,12 @@ import store from './electronStore';
 import * as path from 'path';
 import buildTokenizer from './myTokenizer';
 import cleaningToken from './cleaning';
+import {
+  tfidfArray,
+  tfidfToken,
+  document,
+  WordDocMap,
+} from '../../common/types';
 
 /**
  * フォルダを読み込んで中のPDFを返す関数
@@ -67,19 +73,12 @@ const readTxtFile = async (filePath: string) => {
  * @returns　allDocumentsTFIDF:{ text: string; tfidf: number }[][]
  */
 const readTxtFiles = async (dirPath: string) => {
-  type WordDocMap = Map<string, Set<number>>;
-  type tfidfToken = { name: string; value: number }; //echartに合わせてる
-  type tfidfArray = tfidfToken[][];
   try {
     const pdfs = await readFolderPDF(dirPath);
-    let fileName = '';
-    let fl = 0;
-    let filePath;
-    let txt = '';
-    let tokens = [];
     let tokensTF = [];
-    let allDocumentsTFIDF: tfidfArray = [[]];
+    let allDocumentsTFIDF: tfidfArray = [];
     let allDocumentsTF = [];
+    let documents: document[] = [];
     let wordDocMap: WordDocMap = new Map();
     let idfMap: Map<string, number> = new Map();
     const memoTemp = store.get('memoTemplate', '');
@@ -89,11 +88,11 @@ const readTxtFiles = async (dirPath: string) => {
       .filter((t) => t.pos === '名詞')
       .map((t) => (t.basic_form === '*' ? t.surface_form : t.basic_form));
     for (let i = 0; i < pdfs.length; i++) {
-      fileName = pdfs[i];
-      fl = fileName.length;
-      filePath = dirPath + '\\Memo\\' + fileName.slice(0, fl - 4) + '.txt';
-      txt = await readTxtFile(filePath);
-      tokens = tokenizer.tokenize(txt);
+      let fileName = pdfs[i];
+      let fl = fileName.length;
+      let filePath = dirPath + '\\Memo\\' + fileName.slice(0, fl - 4) + '.txt';
+      let txt = await readTxtFile(filePath);
+      let tokens = tokenizer.tokenize(txt);
       // TFの計算
       tokensTF = tokens
         .filter((t) => t.pos === '名詞')
@@ -137,7 +136,7 @@ const readTxtFiles = async (dirPath: string) => {
     // TF-IDFの計算
     for (let i = 0; i < allDocumentsTF.length; i++) {
       const nowDoc = allDocumentsTF[i];
-      let tempDoc: tfidfToken[] = [];
+      let tempTokens: tfidfToken[] = [];
       for (let j = 0; j < nowDoc.length; j++) {
         let t = nowDoc[j];
         let tempWord: tfidfToken = {
@@ -146,11 +145,32 @@ const readTxtFiles = async (dirPath: string) => {
         };
         tempWord.name = t.text;
         tempWord.value = t.tf * idfMap.get(t.text)!;
-        tempDoc.push(tempWord);
+        tempTokens.push(tempWord);
       }
-      allDocumentsTFIDF.push(tempDoc);
+      allDocumentsTFIDF.push(tempTokens);
     }
-    return allDocumentsTFIDF;
+    // 返すDocumentの再構成
+    for (let i = 0; i < pdfs.length; i++) {
+      let tempDoc: document = {
+        id: -1,
+        fileName: '',
+        filePath: '',
+        tokens: [],
+        fileContent: '',
+        wordNumber: 0,
+      };
+      tempDoc.id = i;
+      tempDoc.fileName = pdfs[i];
+      tempDoc.filePath =
+        dirPath + '\\Memo\\' + pdfs[i].slice(0, pdfs[i].length - 4) + '.txt';
+      tempDoc.tokens = allDocumentsTFIDF[i];
+      await readTxtFile(tempDoc.filePath).then((txt: string) => {
+        tempDoc.fileContent = txt;
+        tempDoc.wordNumber = tokenizer.tokenize(txt).length;
+      });
+      documents.push(tempDoc);
+    }
+    return documents;
   } catch (err) {
     console.log(err);
     return [];

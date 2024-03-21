@@ -26,7 +26,11 @@ const patternTest = (token: string) => {
 const kigoTest = (token: string) => {
   const stopKigo = [
     '<',
+    '＜',
     '>',
+    '＞',
+    '/>',
+    '/＞',
     '[',
     '「',
     ']',
@@ -38,6 +42,20 @@ const kigoTest = (token: string) => {
     '-',
     '*',
     '**',
+    '|',
+    '~',
+    '～',
+    '**</',
+    '>**',
+    '"',
+    '">**',
+    '/',
+    '・',
+    '.',
+    '=',
+    '＝',
+    '+',
+    '＋',
   ];
   return stopKigo.includes(token);
 };
