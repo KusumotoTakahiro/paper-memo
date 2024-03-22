@@ -24,22 +24,26 @@ const WordCloud = () => {
     pages: 0,
   });
 
-  const refleshWindow = () => {
-    window.electron.electronStore.getlist().then((list) => {
-      window.electron.electronStore.getSelectedIndex().then(async (idx) => {
-        setDirPath(list[idx]);
-        if (dirPath !== '') {
-          window.electron.fs.readTxtFiles(dirPath).then((res) => {
-            console.log(res);
-            setAllDocuments(res);
-          });
-        }
-      });
-    });
+  const refreshWindow = async () => {
+    const list = await window.electron.electronStore.getlist();
+    const idx = await window.electron.electronStore.getSelectedIndex();
+    if (idx >= 0 && idx < list.length) {
+      const newPath = list[idx];
+      setDirPath(newPath);
+    } else {
+      console.error('Invalid index');
+    }
   };
 
   React.useEffect(() => {
-    refleshWindow();
+    refreshWindow();
+    if (dirPath !== '') {
+      const loadDocuments = async () => {
+        const res = await window.electron.fs.readTxtFiles(dirPath);
+        setAllDocuments(res);
+      };
+      loadDocuments();
+    }
   }, [dirPath]);
 
   const springApi = useSpringRef();

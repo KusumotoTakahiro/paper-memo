@@ -101,6 +101,8 @@ const createWindow = async () => {
       },
     },
   });
+  // 本番環境でのデバック時に使用する
+  //mainWindow.webContents.openDevTools();
 
   fileDialogFunctionListener(mainWindow);
 
