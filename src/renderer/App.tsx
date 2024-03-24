@@ -55,12 +55,12 @@ export default function TemporaryDrawer() {
     <Home />,
     // <FormatListNumbered />,
     <AssignmentIcon />,
-    <SettingsIcon />,
     <FilterDramaIcon />,
+    <SettingsIcon />,
     <LogoutIcon />,
   ];
 
-  const routePath = ['#home', '#dict', '#setting', '#wordcloud'];
+  const routePath = ['#home', '#dict', '#wordcloud', '#setting'];
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -83,7 +83,7 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {['Home', 'MyDictionary', 'Setting', 'WordCloud'].map((text, index) => (
+        {['Home', 'MyDictionary', 'WordCloud', 'Setting'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton href={routePath[index]}>
               <ListItemIcon>{iconList[index]}</ListItemIcon>
