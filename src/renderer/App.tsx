@@ -7,8 +7,9 @@ import SettingPage from './pages/Setting';
 import LogoutPage from './pages/logout';
 import WordCloud from './pages/WordCloud';
 import TaskManagement from './pages/TaskManagement';
+import MyDictionary from './MyDictionary';
 import AssignmentIcon from '@mui/icons-material/Assignment';
-import FlashAlert from './components/FlashAlert';
+import FlashAlert from './components/SpringFlashAlert';
 
 import Box from '@mui/material/Box';
 import Drawer from '@mui/material/Drawer';
@@ -59,7 +60,7 @@ export default function TemporaryDrawer() {
     <LogoutIcon />,
   ];
 
-  const routePath = ['#home', '#taskmanagement', '#setting', '#wordcloud'];
+  const routePath = ['#home', '#dict', '#setting', '#wordcloud'];
 
   const toggleDrawer =
     (anchor: Anchor, open: boolean) =>
@@ -82,7 +83,7 @@ export default function TemporaryDrawer() {
       onKeyDown={toggleDrawer(anchor, false)}
     >
       <List>
-        {['Home', 'MyTask', 'Setting', 'WordCloud'].map((text, index) => (
+        {['Home', 'MyDictionary', 'Setting', 'WordCloud'].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton href={routePath[index]}>
               <ListItemIcon>{iconList[index]}</ListItemIcon>
@@ -130,10 +131,19 @@ export default function TemporaryDrawer() {
             element={<HomePage showFlashAlert={showFlashAlert} />}
           />
           <Route path="/create" element={<CreatePage />} />
-          <Route path="/setting" element={<SettingPage />} />
+          <Route
+            path="/setting"
+            element={<SettingPage showFlashAlert={showFlashAlert} />}
+          />
           <Route path="/logout" element={<LogoutPage />} />
-          <Route path="/wordcloud" element={<WordCloud />}></Route>
-          <Route path="/taskmanagement" element={<TaskManagement />}></Route>
+          <Route
+            path="/wordcloud"
+            element={<WordCloud showFlashAlert={showFlashAlert} />}
+          ></Route>
+          <Route
+            path="/dict"
+            element={<MyDictionary showFlashAlert={showFlashAlert} />}
+          ></Route>
           <Route
             path="/"
             element={<HomePage showFlashAlert={showFlashAlert} />}

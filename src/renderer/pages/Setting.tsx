@@ -9,7 +9,15 @@ import Typography from '@mui/material/Typography';
 import DirectorysList from '../components/DirectorysList';
 import FormForMemoTemplate from '../components/FormForMemoTemplate';
 
-const Setting = () => {
+interface Props {
+  showFlashAlert: (
+    severity: string,
+    message: string,
+    alertTitle: string,
+  ) => void;
+}
+
+const Setting = ({ showFlashAlert }: Props) => {
   const [workDirPath, setWorkDirPath] = React.useState<string>('');
   const [changed, setChanged] = React.useState<boolean>(false);
   const [dirs, setDirs] = React.useState<string[]>([]);
@@ -29,6 +37,7 @@ const Setting = () => {
       }
     }
     newDirs.push(workDirPath);
+    showFlashAlert('success', workDirPath + 'を追加しました', 'Save Path');
     await window.electron.electronStore.setlist(newDirs);
     await window.electron.electronStore.getlist().then((dirs) => {
       setDirs(dirs);
@@ -55,6 +64,11 @@ const Setting = () => {
     let newDirs: string[] = dirs.filter((path, index) => {
       return index !== listIndex;
     });
+    showFlashAlert(
+      'success',
+      dirs[listIndex] + 'を削除しました',
+      'Delete Path',
+    );
     await window.electron.electronStore.setlist(newDirs);
     await window.electron.electronStore.getlist().then((ds) => {
       setDirs(ds);

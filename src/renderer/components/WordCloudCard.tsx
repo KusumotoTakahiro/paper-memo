@@ -3,7 +3,7 @@ import { Card, CardActionArea, Typography, Button } from '@mui/material';
 import * as echarts from 'echarts';
 import 'echarts-wordcloud';
 import { document } from '../../common/types';
-
+import '../css/WordCloudCard.css';
 interface Props {
   document: document;
   displayNowMemo: (memo: document) => void;
@@ -72,34 +72,48 @@ const WordCloudCard = ({ document, displayNowMemo, open }: Props) => {
     <>
       <Card
         sx={{ height: 400, position: 'relative' }}
+        className="wordcloudcard"
         key={document.id}
-        elevation={5}
+        elevation={3}
       >
-        <Typography sx={{ fontSize: 14 }}>{document.fileName}</Typography>
-        {document.tokens.length === 0 ? (
+        <CardActionArea
+          className="actionarea"
+          onClick={(e) => displayNowMemo(document)}
+        >
           <Typography
+            variant="subtitle2"
             sx={{
-              color: 'grey',
-              margin: 'auto',
-              fontSize: 14,
+              margin: '5px',
+              fontWeight: 'bold',
+              position: 'absolute',
+              top: 0,
+              width: '80%',
             }}
           >
-            表示できるデータがありません
+            {document.fileName}
           </Typography>
-        ) : (
-          <div
-            ref={chartRef}
-            style={{ width: '100%', height: '90%', margin: 0 }}
-          ></div>
-        )}
-        <Typography sx={{ position: 'absolute', bottom: 0, left: 10 }}>
-          全トークン数 : {document.wordNumber}単語
-        </Typography>
-        <Typography sx={{ position: 'absolute', bottom: 0, right: 10 }}>
-          文字数 : {document.fileContent.length}字
-        </Typography>
-        <CardActionArea sx={{ position: 'absolute', bottom: 20 }}>
-          <Button onClick={(e) => displayNowMemo(document)}>編集</Button>
+          {document.tokens.length === 0 ? (
+            <Typography
+              sx={{
+                color: 'grey',
+                margin: 'auto',
+                fontSize: 14,
+              }}
+            >
+              表示できるデータがありません
+            </Typography>
+          ) : (
+            <div
+              ref={chartRef}
+              style={{ width: '100%', height: '90%', margin: 0 }}
+            ></div>
+          )}
+          <Typography className="cardinfoleft">
+            全トークン数 : {document.wordNumber}単語
+          </Typography>
+          <Typography className="cardinforight">
+            文字数 : {document.fileContent.length}字
+          </Typography>
         </CardActionArea>
       </Card>
     </>

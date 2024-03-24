@@ -1,5 +1,4 @@
 import * as React from 'react';
-import { Box, Grid } from '@mui/material';
 import {
   useTransition,
   useSpring,
@@ -13,7 +12,15 @@ import MemoMarkdown from '../components/MemoMarkdown';
 import { document, PDFMetaData } from '../../common/types';
 import '../css/WordCloud.css';
 
-const WordCloud = () => {
+interface Props {
+  showFlashAlert: (
+    severity: string,
+    message: string,
+    alertTitle: string,
+  ) => void;
+}
+
+const WordCloud = ({ showFlashAlert }: Props) => {
   const [dirPath, setDirPath] = React.useState<string>('');
   const [allDocuments, setAllDocuments] = React.useState<document[]>([]);
   const [openMemo, setOpenMemo] = React.useState<boolean>(true);
@@ -57,45 +64,37 @@ const WordCloud = () => {
     },
   });
 
+  // 一覧表示されたWordCloud
   const transApi = useSpringRef();
-  const transition = useTransition(openMemo ? allDocuments : [], {
+  const transition = useTransition(openMemo ? allDocuments : nowMemo, {
     ref: transApi,
     trail: 400 / allDocuments.length,
     from: { opacity: 0, scale: 0 },
     enter: { opacity: 1, scale: 1 },
     leave: { opacity: 0, scale: 0 },
+    update: { opacity: 1, scale: 1 },
+    config: { mass: 1, tension: 210, friction: 20 },
   });
 
-  const transApi2 = useSpringRef();
-  const transition2 = useTransition(openMemo ? [] : nowMemo, {
-    ref: transApi2,
-    keys: (item) => item.id, // 仮に `id` が一意の識別子だとします
-    trail: 200 / (nowMemo.length === 0 ? 1 : 0),
-    from: { opacity: 0, scale: 0 },
-    enter: { opacity: 1, scale: 1 },
-    leave: { opacity: 0, scale: 0 },
-  });
-
+  //左側のメモ
   const transApi3 = useSpringRef();
   const transition3 = useTransition(openMemo ? [] : [nowPDF], {
     ref: transApi3,
-    keys: (item) => item.fileName, // `fileName` をキーとします
-    trail: 10 / (nowPDF ? 1 : 0),
+    keys: (item) => item.fileName,
     from: { opacity: 0, scale: 0.5 }, // 小さい状態から開始
     enter: { opacity: 1, scale: 1 }, // 通常のサイズに戻る
     leave: { opacity: 0, scale: 0 },
-    config: { mass: 1, tension: 210, friction: 20 }, // アニメーションの感触を調整
+    config: { mass: 1, tension: 1000, friction: 20 },
   });
 
   useChain(
     openMemo
-      ? [springApi, transApi, transApi2, transApi3]
-      : [transApi2, transApi3, transApi, springApi],
-    [0, openMemo ? 0.1 : 0.6, openMemo ? 0 : 0.9, openMemo ? 0 : 1.2],
+      ? [springApi, transApi, transApi3]
+      : [transApi3, transApi, springApi],
+    [0, openMemo ? 0.1 : 0.3, openMemo ? 0 : 0.1],
   );
 
   const displayNowMemo = (nowMemo: document) => {
-    console.log('nowOpen: ' + String(openMemo));
     if (openMemo) {
       setNowMemo([nowMemo]);
       let temp = nowPDF;
@@ -110,63 +109,58 @@ const WordCloud = () => {
       {allDocuments.length === 0 ? (
         <>データ更新中</>
       ) : (
-        <div
-          style={{
-            marginTop: 70,
-          }}
-          className="wrapper"
-        >
-          <animated.div
-            style={{ ...rest, width: size, height: size }}
-            className="container"
-          >
-            {transition((style, item) => (
-              <animated.div style={style}>
-                <WordCloudCard
-                  document={item}
-                  displayNowMemo={displayNowMemo}
-                  open={openMemo}
-                />
+        <>
+          {nowMemo.length === 0 ? (
+            <div
+              style={{
+                marginTop: 70,
+              }}
+              className="wrapper"
+            >
+              <animated.div
+                style={{ ...rest, width: size, height: size }}
+                className="container"
+              >
+                {transition((style, item) => (
+                  <animated.div style={style}>
+                    <WordCloudCard
+                      document={item}
+                      displayNowMemo={displayNowMemo}
+                      open={openMemo}
+                    />
+                  </animated.div>
+                ))}
               </animated.div>
-            ))}
-          </animated.div>
-        </div>
-      )}
-      {nowMemo.length === 0 ? (
-        <></>
-      ) : (
-        <div
-          style={{
-            marginTop: 70,
-          }}
-          className="wrapper"
-        >
-          <animated.div
-            style={{ ...rest, width: size, height: size }}
-            className="container2"
-          >
-            {transition2((style, item) => (
-              <animated.div>
-                <WordCloudCard
-                  document={item}
-                  displayNowMemo={displayNowMemo}
-                  open={openMemo}
-                />
-              </animated.div>
-            ))}
-            {nowMemo.length === 0 ? (
-              <></>
-            ) : (
-              <>
+            </div>
+          ) : (
+            <div
+              style={{
+                marginTop: 70,
+              }}
+              className="wrapper"
+            >
+              <animated.div
+                style={{ ...rest, width: size, height: size }}
+                className="container2"
+              >
+                {transition((style, item) => (
+                  <animated.div style={style}>
+                    <WordCloudCard
+                      document={item}
+                      displayNowMemo={displayNowMemo}
+                      open={openMemo}
+                    />
+                  </animated.div>
+                ))}
                 {transition3((style, item) => (
-                  <animated.div style={style} className="memo">
+                  <animated.div className="memo">
                     <MemoMarkdown nowPdf={item} dirPath={nowMemo[0].filePath} />
                   </animated.div>
                 ))}
-              </>
-            )}
-          </animated.div>
-        </div>
+              </animated.div>
+            </div>
+          )}
+        </>
       )}
     </>
   );
